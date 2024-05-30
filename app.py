@@ -22,5 +22,12 @@ def incoming_sms():
 
     return str(resp)
 
+
+@app.route("/dilog", methods=['POST'])
+def incoming_dilog():
+
+    rcvd_data= request.data
+    print (f'=============RECEVIED \n {rcvd_data}')
+
 if __name__ == "__main__":
     app.run(debug=True)
