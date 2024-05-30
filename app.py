@@ -1,4 +1,5 @@
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect,jsonify
+
 from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
@@ -28,6 +29,16 @@ def incoming_dilog():
 
     rcvd_data= request.data
     print (f'=============RECEVIED \n {rcvd_data}')
+
+    json_data = request.get_json()
+    
+    # Check if the required field exists in the JSON data
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'account' in json_data['sessionInfo']['parameters']:
+        # Extract the "account" field
+        account = json_data['sessionInfo']['parameters']['account']
+        return jsonify({"account": account}), 200
+    else:
+        return jsonify({"error": "Account field not found"}), 400
     return "OK"
 
 if __name__ == "__main__":
