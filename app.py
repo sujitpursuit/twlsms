@@ -32,7 +32,7 @@ def incoming_dilog():
 
     json_data = request.get_json()
     print (f'=============json data \n {json_data}')
-    print(f'========parameters {json_data['sessionInfo']['parameters']}')
+    print("========parameters  " + json_data['sessionInfo']['parameters'])
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'account' in json_data['sessionInfo']['parameters']:
         # Extract the "account" field
