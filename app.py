@@ -28,6 +28,7 @@ def incoming_dilog():
 
     rcvd_data= request.data
     print (f'=============RECEVIED \n {rcvd_data}')
+    return "OK"
 
 if __name__ == "__main__":
     app.run(debug=True)
