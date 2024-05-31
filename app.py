@@ -38,7 +38,22 @@ def incoming_dilog():
         # Extract the "account" field
         account = json_data['sessionInfo']['parameters']['account']
         print (f'Accoount ====> {account}')
-        return jsonify({"account": account}), 200
+        #return jsonify({"account": account}), 200
+         # Create the WebhookResponse
+        account_name="SUJIT SARKAR"
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [f"The account name for {account} is {account_name}"]
+                        }
+                    }
+                ]
+            }
+        }
+
+        return jsonify(response)
     else:
         return jsonify({"error": "Account field not found"}), 400
     return "OK"
