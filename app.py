@@ -24,8 +24,8 @@ def incoming_sms():
     return str(resp)
 
 
-@app.route("/dilog", methods=['POST'])
-def incoming_dilog():
+@app.route("/dialog/account", methods=['POST'])
+def validate_account():
 
     rcvd_data= request.data
     print (f'=============RECEVIED \n {rcvd_data}')
@@ -34,9 +34,9 @@ def incoming_dilog():
     print (f'=============json data \n {json_data}')
     print(f"========parameters {json_data['sessionInfo']['parameters']}")
     # Check if the required field exists in the JSON data
-    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'account' in json_data['sessionInfo']['parameters']:
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'account_number' in json_data['sessionInfo']['parameters']:
         # Extract the "account" field
-        account = json_data['sessionInfo']['parameters']['account']
+        account = json_data['sessionInfo']['parameters']['account_number']
         print (f'Accoount ====> {account}')
         #return jsonify({"account": account}), 200
          # Create the WebhookResponse
@@ -56,7 +56,75 @@ def incoming_dilog():
         return jsonify(response)
     else:
         return jsonify({"error": "Account field not found"}), 400
-    return "OK"
+    
+
+@app.route("/dialog/dob", methods=['POST'])
+def validate_dob():
+
+    rcvd_data= request.data
+    print (f'=============RECEVIED \n {rcvd_data}')
+
+    json_data = request.get_json()
+    print (f'=============json data \n {json_data}')
+    print(f"========parameters {json_data['sessionInfo']['parameters']}")
+    # Check if the required field exists in the JSON data
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'date_of_birth_yyyymmdd' in json_data['sessionInfo']['parameters']:
+        # Extract the "account" field
+        dob = json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
+        print (f'DOB ====> {dob}')
+        
+         # Create the WebhookResponse
+      
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [f"The date of birth for is {dob}"]
+                        }
+                    }
+                ]
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "Date of birth field not found"}), 400
+    
+
+
+@app.route("/dialog/llm", methods=['POST'])
+def call_llm():
+
+    rcvd_data= request.data
+    print (f'=============RECEVIED \n {rcvd_data}')
+
+    json_data = request.get_json()
+    print (f'=============json data \n {json_data}')
+    print(f"========parameters {json_data['sessionInfo']['parameters']}")
+    # Check if the required field exists in the JSON data
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'prompt_to_llm' in json_data['sessionInfo']['parameters']:
+        # Extract the "llm" field
+        prompt_llm = json_data['sessionInfo']['parameters']['prompt_to_llm']
+        print (f'LLM prompt ====> {prompt_llm}')
+        
+         # Create the WebhookResponse
+     
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [f"The llm prompt is {prompt_llm}"]
+                        }
+                    }
+                ]
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "prompt_llm not found"}), 400   
 
 if __name__ == "__main__":
     app.run(debug=True)
