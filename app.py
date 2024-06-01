@@ -54,6 +54,15 @@ def validate_account():
                         }
                     }
                 ]
+            },
+            "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "account_name": account_name,
+                    }         
+
             }
         }
 
