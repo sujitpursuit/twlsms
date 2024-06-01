@@ -158,6 +158,15 @@ def call_llm():
                         }
                     }
                 ]
+            },
+                     "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "prompt_to_llm": None
+                    }         
+
             }
         }
 
