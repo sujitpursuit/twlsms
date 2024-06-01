@@ -38,19 +38,24 @@ def validate_account():
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'account_number' in json_data['sessionInfo']['parameters']:
         # Extract the "account" field
-        account = json_data['sessionInfo']['parameters']['account_number']
-        print (f'Accoount ====> {account}')
+        orig_account = json_data['sessionInfo']['parameters']['account_number']
+        print (f'Accoount ====> {orig_account}')
         #return jsonify({"account": account}), 200
          # Create the WebhookResponse
         #check database for account number
-        account_name=app_helper.getAccountDetails(account)
+        account_name=app_helper.getAccountDetails(orig_account)
         print (f'Accoount name ====> {account_name}')
+        if (account_name=="NOTFOUND"):
+            resp_account_number=None
+        else:
+            resp_account_number=orig_account
+
         response = {
             "fulfillment_response": {
                 "messages": [
                     {
                         "text": {
-                            "text": [f"The account name for {account} is {account_name}"]
+                            "text": [f"The account name for {orig_account} is {account_name}"]
                         }
                     }
                 ]
@@ -61,6 +66,7 @@ def validate_account():
                     "session": json_data['sessionInfo']['session'],
                     "parameters": {
                         "account_name": account_name,
+                        "account_number":resp_account_number
                     }         
 
             }
