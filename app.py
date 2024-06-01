@@ -44,7 +44,7 @@ def validate_account():
          # Create the WebhookResponse
         #check database for account number
         account_name=app_helper.getAccountDetails(account)
-        
+        print (f'Accoount name ====> {account_name}')
         response = {
             "fulfillment_response": {
                 "messages": [

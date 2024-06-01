@@ -19,13 +19,15 @@ def getAccountDetails(accountNumber):
     query = f"SELECT * FROM [dbo].[customer] WHERE account_number = {int(accountNumber)}"
     df = pd.read_sql(sql=query ,con=conn)
     if (df.size > 0):
+        print(f'df from query: {df}')
         customer_name=df['customer_name'].iloc[0]
     #resjon=df.to_json(indent=4, date_format='iso' ,index=False, orient='records')
     #print(f'account name: {resjon[0].customer_name}')
     else:
         customer_name="NOTFOUND"
+   
     return customer_name
 
 
 
-print(getAccountDetails(10002))
+#print(getAccountDetails(10002))
