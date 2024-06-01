@@ -40,7 +40,7 @@ def validate_account():
         # Extract the "account" field
         orig_account = json_data['sessionInfo']['parameters']['account_number']
         print (f'Accoount ====> {orig_account}')
-        #return jsonify({"account": account}), 200
+        
          # Create the WebhookResponse
         #check database for account number
         account_name=app_helper.getAccountDetails(orig_account)
@@ -87,24 +87,43 @@ def validate_dob():
 
     json_data = request.get_json()
     print (f'=============json data \n {json_data}')
-    print(f"========parameters {json_data['sessionInfo']['parameters']}")
+   
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'date_of_birth_yyyymmdd' in json_data['sessionInfo']['parameters']:
         # Extract the "account" field
         dob = json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
         print (f'DOB ====> {dob}')
-        
+        print ( f"Y: {int(dob['year'])} M: {int(dob['month'])} D: {int(dob['day'])}" )
+        orig_account = json_data['sessionInfo']['parameters']['account_number']
+        #validate account
+        valid_dob=app_helper.checkDOB(orig_account,int(dob['year']),int(dob['month']), int(dob['day']))
          # Create the WebhookResponse
-      
+        if (valid_dob):
+            resp_text="Date of Birth is correct"
+            resp_dob=dob
+        else:
+            resp_text="Invalid Date of Birth"
+            resp_dob=None
+            
         response = {
             "fulfillment_response": {
                 "messages": [
                     {
                         "text": {
-                            "text": [f"The date of birth for is {dob}"]
+                            "text": [f"{resp_text}"]
                         }
                     }
                 ]
+            },
+            "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "date_of_birth_yyyymmdd": resp_dob,
+                        "account_number": resp_text
+                    }         
+
             }
         }
 

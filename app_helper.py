@@ -3,6 +3,7 @@ import pyodbc
 import pandas as pd
 from dotenv import load_dotenv, find_dotenv
 import os
+import datetime
 
 # load dotenv 
 load_dotenv()
@@ -29,5 +30,21 @@ def getAccountDetails(accountNumber):
     return customer_name
 
 
+def checkDOB(accountNumber,y,m,d):
+    
+    query = f"SELECT [date_of_birth] FROM [dbo].[customer] WHERE account_number = {int(accountNumber)}"
+    df = pd.read_sql(sql=query ,con=conn)
+    if (df.size > 0):
+        print(f'df from query: {df}')
+        in_dob=datetime.date(y,m,d)
+        print (f"date_of_birth { df['date_of_birth'].iloc[0] }   in_dob {in_dob}" )
+        if (in_dob == df['date_of_birth'].iloc[0]) :
+            valid_dob=True
+        else:
+            valid_dob=False
+    else:
+        valid_dob=False
+   
+    return valid_dob
 
 #print(getAccountDetails(10002))
