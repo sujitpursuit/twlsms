@@ -47,15 +47,17 @@ def validate_account():
         print (f'Accoount name ====> {account_name}')
         if (account_name=="NOTFOUND"):
             resp_account_number=None
+            resp_text="Invalid Account Number"
         else:
             resp_account_number=orig_account
+            resp_text=f"The name on the account is {account_name}"
 
         response = {
             "fulfillment_response": {
                 "messages": [
                     {
                         "text": {
-                            "text": [f"The account name for {orig_account} is {account_name}"]
+                            "text": [resp_text]
                         }
                     }
                 ]
