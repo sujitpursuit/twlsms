@@ -43,8 +43,8 @@ def validate_account():
         #return jsonify({"account": account}), 200
          # Create the WebhookResponse
         #check database for account number
-        res=app_helper.getAccountDetails(account)
-        account_name="SUJIT SARKAR"
+        account_name=app_helper.getAccountDetails(account)
+        
         response = {
             "fulfillment_response": {
                 "messages": [
