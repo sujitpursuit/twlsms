@@ -120,8 +120,7 @@ def validate_dob():
                 
                     "session": json_data['sessionInfo']['session'],
                     "parameters": {
-                        "date_of_birth_yyyymmdd": resp_dob,
-                        "account_number": resp_text
+                        "date_of_birth_yyyymmdd": resp_dob
                     }         
 
             }
