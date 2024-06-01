@@ -48,3 +48,24 @@ def checkDOB(accountNumber,y,m,d):
     return valid_dob
 
 #print(getAccountDetails(10002))
+
+def write_chat_log(account_no, session,ctime, su, cmessage):
+    cursor = conn.cursor()
+    print(f"account {account_no} session {session} time {ctime}  su {su} message {cmessage}")
+    # Do the insert
+    insert_stmt= """insert into chat_messages (account_number, session_id,chat_time,system_or_user,chat_message) values (?,?,?,?,?)"""
+    #commit the transaction
+    
+    cursor.execute(insert_stmt, int(account_no), session,ctime, su, cmessage)
+    conn.commit()
+
+def get_session_id(full_session_id):
+   
+    # Split the string by "/"
+    parts = full_session_id.split("/")
+
+    # Get the last element
+    last_field = parts[-1]
+
+    return last_field 
+
