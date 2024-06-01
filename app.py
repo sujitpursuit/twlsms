@@ -2,6 +2,8 @@ from flask import Flask, request, redirect,jsonify
 
 from twilio.twiml.messaging_response import MessagingResponse
 
+import app_helper
+
 app = Flask(__name__)
 
 @app.route("/sms", methods=['GET', 'POST'])
@@ -40,6 +42,8 @@ def validate_account():
         print (f'Accoount ====> {account}')
         #return jsonify({"account": account}), 200
          # Create the WebhookResponse
+        #check database for account number
+        res=app_helper.getAccountDetails(account)
         account_name="SUJIT SARKAR"
         response = {
             "fulfillment_response": {
