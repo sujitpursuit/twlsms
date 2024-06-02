@@ -4,6 +4,7 @@ import pandas as pd
 from dotenv import load_dotenv, find_dotenv
 import os
 import datetime
+import requests
 
 # load dotenv 
 load_dotenv()
@@ -48,6 +49,33 @@ def checkDOB(accountNumber,y,m,d):
     return valid_dob
 
 #print(getAccountDetails(10002))
+
+def call_llm(account_no, prompt):
+
+    # Define the API endpoint
+    url = f"https://insurance-nlq.azurewebsites.net/api/v1/llm/prompt-results/{account_no}"
+
+    # Define the data to be sent in the request body
+    payload = {
+        "user_query" : prompt
+    }
+
+    # Make the GET request
+    #response = requests.get(url)
+    # Make the POST request
+    response = requests.post(url, json=payload)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+        summary=data['summary']
+        print(f"\nSummary => {summary}")
+        return_text=summary
+    else:
+        return_text=f"Request failed with status code: {response.status_code}"
+
+    return return_text
 
 def write_chat_log(account_no, session,ctime, su, cmessage):
     cursor = conn.cursor()

@@ -186,9 +186,11 @@ def call_llm():
         app_helper.write_chat_log(orig_account, short_session,user_time, "U", prompt_llm)
         print (f'LLM prompt ====> {prompt_llm}')
         
-        #TOdO: Call llm API
-        
-        resp_text=f"The llm prompt is {prompt_llm}"
+        #Call llm API
+        llm_response=app_helper.call_llm(int(orig_account),prompt_llm)
+        #Strip new lines
+        resp_text=llm_response.replace('\n', ' ')
+        print(f"=========> resp_text = {resp_text}")
         #write chat_log 2
         sys_time=datetime.now()
         app_helper.write_chat_log(orig_account,short_session ,sys_time, "S", resp_text)   
