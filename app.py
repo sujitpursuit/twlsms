@@ -65,6 +65,11 @@ def validate_account():
         account_name=app_helper.getAccountDetails(orig_account)
         print (f'Account name ====> {account_name}')
 
+        welcome_text="Welcome to the PolicyPal. Please enter your Account Number."
+        #write chat_log 0
+        app_helper.write_chat_log(orig_account, short_session,user_time, "S", welcome_text)
+
+        user_time=datetime.now()
         #write chat_log 1
         app_helper.write_chat_log(orig_account, short_session,user_time, "U", orig_account)
 
@@ -75,7 +80,7 @@ def validate_account():
             resp_text="Invalid Account Number"
         else:
             resp_account_number=orig_account
-            resp_text=f"The name on the account is {account_name}"
+            resp_text=f"Welcome {account_name}"
 
         #write chat_log 2
         sys_time=datetime.now()
@@ -134,6 +139,12 @@ def validate_dob():
         input_year=int(dob['year'] )
         input_dob_str=f"{input_year}{input_month:02}{input_day:02}"
         print(f"INPUT DOB {input_dob_str}")
+
+        validation_text="Please enter your Date of Birth."
+        #write chat_log 0
+        app_helper.write_chat_log(orig_account, short_session,user_time, "S", validation_text)
+
+        user_time=datetime.now()
         #write chat_log 1
         app_helper.write_chat_log(orig_account, short_session,user_time, "U", input_dob_str)
 
@@ -141,7 +152,7 @@ def validate_dob():
         valid_dob=app_helper.checkDOB(orig_account,input_year,input_month, input_day)
          # Create the WebhookResponse
         if (valid_dob):
-            resp_text="Date of Birth is correct"
+            resp_text="Your access is validated. "
             resp_dob=dob
         else:
             resp_text="Invalid Date of Birth"
