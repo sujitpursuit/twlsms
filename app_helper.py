@@ -5,6 +5,7 @@ from dotenv import load_dotenv, find_dotenv
 import os
 import datetime
 import requests
+from flask_mail import Mail, Message
 
 # load dotenv 
 load_dotenv()
@@ -97,3 +98,13 @@ def get_session_id(full_session_id):
 
     return last_field 
 
+
+def send_email(mail, email_subject,email_body, recipient):
+    try:
+        msg = Message(email_subject,
+                      recipients=[recipient])
+        msg.body = email_body
+        mail.send(msg)
+        return 'Email sent successfully!'
+    except Exception as e:
+        return str(e)

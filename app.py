@@ -4,8 +4,22 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 import app_helper
 from datetime import datetime
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
+
+
+# Configure Flask-Mail
+app.config['MAIL_SERVER'] = 'mail.smtp2go.com'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'insurance.chat'
+app.config['MAIL_PASSWORD'] = 'L8138M7kIS56P1ii'
+app.config['MAIL_DEFAULT_SENDER'] = ('Insurance Chatbot', 'sujit_s@pursuitsoftware.biz')
+
+mail = Mail(app)
+
 
 @app.route("/sms", methods=['GET', 'POST'])
 def incoming_sms():
@@ -237,7 +251,15 @@ def transfer_chat():
         # Extract the "llm" field
         prompt_llm = json_data['sessionInfo']['parameters']['prompt_to_llm']
         print (f'Transfer to chat {prompt_llm}')
-        
+
+        base_url="https://insurancenlq.azurewebsites.net/loadchat"
+        short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
+        orig_account = int(json_data['sessionInfo']['parameters']['account_number'])
+        url = f"{base_url}/{orig_account}/{short_session}"
+        email_body=f"Click on {url} to go to continue your conversation in the Insurance Chatbot "
+        print(f"email body => {email_body}")
+        app_helper.send_email(mail,"Transfering session to chat",email_body,"sujit2050@yahoo.com")
+
          # Create the WebhookResponse
      
         response = {
@@ -245,7 +267,7 @@ def transfer_chat():
                 "messages": [
                     {
                         "text": {
-                            "text": [f"I am transferring to chat"]
+                            "text": [f"Please check your email to see instructions to transfer your current conversation to Insurance chatbot"]
                         }
                     }
                 ]
@@ -255,6 +277,16 @@ def transfer_chat():
         return jsonify(response)
     else:
         return jsonify({"error": "prompt_llm not found"}), 400   
+
+
+@app.route('/send-email')
+def send_email():
     
+    ret_msg=app_helper.send_email(mail,"Hello from Flaskmail","This is test email from Flask email","sujit2050@yahoo.com")
+   
+    return str(ret_msg)
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)

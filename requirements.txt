@@ -3,3 +3,4 @@ flask
 pandas
 pyodbc
 python-dotenv
+Flask-Mail
