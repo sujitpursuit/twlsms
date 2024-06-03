@@ -258,7 +258,9 @@ def transfer_chat():
         url = f"{base_url}/{orig_account}/{short_session}"
         email_body=f"Click on {url} to go to continue your conversation in the Insurance Chatbot "
         print(f"email body => {email_body}")
-        app_helper.send_email(mail,"Transfering session to chat",email_body,"sujit2050@yahoo.com")
+        email_id=app_helper.get_email(orig_account)
+        print(f"email to => {email_id}")
+        app_helper.send_email(mail,"Transfering session to chat",email_body,email_id)
 
          # Create the WebhookResponse
      

@@ -98,6 +98,19 @@ def get_session_id(full_session_id):
 
     return last_field 
 
+def get_email(account_number):
+    query = f"SELECT [customer_email] FROM [dbo].[customer] WHERE account_number = {account_number}"
+    df = pd.read_sql(sql=query ,con=conn)
+    if (df.size > 0):
+        #print(f'df from query: {df}')
+        email_id=df['customer_email'].iloc[0]
+        print (f"email { email_id }   " )
+        
+    else:
+        email_id="EMAIL_NOTFOUND"
+   
+    return email_id
+
 
 def send_email(mail, email_subject,email_body, recipient):
     try:
