@@ -57,13 +57,14 @@ def validate_account():
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'account_number' in json_data['sessionInfo']['parameters']:
         # Extract the "account" field
-        orig_account_wo_Z= json_data['sessionInfo']['parameters']['account_number']
-
+        orig_account_temp =json_data['sessionInfo']['parameters']['account_number']
+        print (f'Accoount Number Temp====> {orig_account_temp}')
         #Remove digits coming from phone
-        orig_account_wo_Z=orig_account_wo_Z.replace("Zdtmf_digits_", "")
+        orig_account_wo_Z=orig_account_temp.replace("Zdtmf_digits_", "")
+        print (f'Accoount Number without z====> {orig_account_wo_Z}')
         #Add Z only for validation
         orig_account = "Z"+orig_account_wo_Z
-        print (f'Accoount Number====> {orig_account}')
+        print (f'FINAL Accoount Number====> {orig_account}')
         
          # Create the WebhookResponse
         #check database for account number
