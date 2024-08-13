@@ -9,21 +9,26 @@ from flask_mail import Mail, Message
 
 # load dotenv 
 load_dotenv()
-#print(os.getenv('DB_SERVER'))
+print(os.getenv('DB_SERVER'))
 con_string = 'DRIVER={ODBC Driver 18 for SQL Server};'+'SERVER='+os.getenv('DB_SERVER') +';'+'Database='+os.getenv('DB_NAME') +';'+'UID='+os.getenv('DB_USERNAME') +';' +'PWD='+os.getenv('DB_PWD') +';'
 #print(con_string) #for debugging only
 global conn 
-conn = pyodbc.connect(con_string)
+try:
+    conn = pyodbc.connect(con_string)
+    print('DB CONNETION SUCCESS')
+except:
+    print('Error in connection')
 
  
 
 def getAccountDetails(accountNumber):
     
-    query = f"SELECT * FROM [dbo].[customer] WHERE account_number = {int(accountNumber)}"
+   # query = f"SELECT * FROM [dbo].[customer] WHERE account_number = {int(accountNumber)}"
+    query = f"select pi.Name as name from PolicyD.PrimaryInsured pi JOIN PolicyD.PolicyDetails pl ON pi.PolicyNumber=pl.PolicyNumber AND pl.AccountNumber=\'{accountNumber}\'"
     df = pd.read_sql(sql=query ,con=conn)
     if (df.size > 0):
         print(f'df from query: {df}')
-        customer_name=df['customer_name'].iloc[0]
+        customer_name=df['name'].iloc[0]
     #resjon=df.to_json(indent=4, date_format='iso' ,index=False, orient='records')
     #print(f'account name: {resjon[0].customer_name}')
     else:
@@ -50,6 +55,19 @@ def checkDOB(accountNumber,y,m,d):
     return valid_dob
 
 #print(getAccountDetails(10002))
+def checkPolicyNumber(orig_account,policynumber):
+    query = f"SELECT  [PolicyNumber] as policynumber FROM [PolicyD].[PolicyDetails] WHERE AccountNumber=\'{orig_account}\' AND PolicyNumber=\'{policynumber}\'"
+    df = pd.read_sql(sql=query ,con=conn)
+    if (df.size > 0): #Found policy in account
+
+        print (f"policynumber from sql ==>{ df['policynumber'].iloc[0] }   " )
+        
+        valid_dob=True
+       
+    else:
+        valid_dob=False
+   
+    return valid_dob
 
 def call_llm(account_no, prompt):
 
@@ -80,12 +98,15 @@ def call_llm(account_no, prompt):
 
 def write_chat_log(account_no, session,ctime, su, cmessage):
     cursor = conn.cursor()
+    print(f"connection in writechat {conn}")
     print(f"account {account_no} session {session} time {ctime}  su {su} message {cmessage}")
     # Do the insert
-    insert_stmt= """insert into chat_messages (account_number, session_id,chat_time,system_or_user,chat_message) values (?,?,?,?,?)"""
+    insert_stmt= """insert into PolicyD.chat_messages (account_number, session_id,chat_time,system_or_user,chat_message) values (?,?,?,?,?)"""
+    #insert_stmt=f"""insert into chat_messages (account_number, session_id,chat_time,system_or_user,chat_message) values ({int(account_no)},\"{session,}\",\"{su}\", \"{cmessage}\""""
     #commit the transaction
-    
-    cursor.execute(insert_stmt, int(account_no), session,ctime, su, cmessage)
+    #print(f"insert stmt {insert_stmt}")
+    #cursor.execute(insert_stmt, int(account_no), session,ctime, su, cmessage)
+    cursor.execute(insert_stmt, account_no, session,ctime, su, cmessage)
     conn.commit()
 
 def get_session_id(full_session_id):
