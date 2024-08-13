@@ -59,6 +59,8 @@ def validate_account():
         # Extract the "account" field
         orig_account_wo_Z= json_data['sessionInfo']['parameters']['account_number']
 
+        #Remove digits coming from phone
+        orig_account_wo_Z=orig_account_wo_Z.replace("Zdtmf_digits_", "")
         #Add Z only for validation
         orig_account = "Z"+orig_account_wo_Z
         print (f'Accoount Number====> {orig_account}')
