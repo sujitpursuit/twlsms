@@ -210,7 +210,13 @@ def validate_policynumber():
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'date_of_birth_yyyymmdd' in json_data['sessionInfo']['parameters']:
         # Extract the "Policynumber" field
-        policynumber = json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
+        policynumber_temp = json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
+
+      
+        print (f'Policy Number Temp====> {policynumber_temp}')
+        #Remove digits coming from phone
+        policynumber=policynumber_temp.replace("dtmf_digits_", "")
+       
         print (f'policynumber ====> {policynumber}')
         #print ( f"Y: {int(dob['year'])} M: {int(dob['month'])} D: {int(dob['day'])}" )
 
