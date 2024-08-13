@@ -57,7 +57,10 @@ def validate_account():
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'account_number' in json_data['sessionInfo']['parameters']:
         # Extract the "account" field
-        orig_account = json_data['sessionInfo']['parameters']['account_number']
+        orig_account_wo_Z= json_data['sessionInfo']['parameters']['account_number']
+
+        #Add Z only for validation
+        orig_account = "Z"+orig_account_wo_Z
         print (f'Accoount Number====> {orig_account}')
         
          # Create the WebhookResponse
@@ -71,7 +74,7 @@ def validate_account():
 
         user_time=datetime.now()
         #write chat_log 1
-        app_helper.write_chat_log(orig_account, short_session,user_time, "U", orig_account)
+        app_helper.write_chat_log(orig_account, short_session,user_time, "U", orig_account_wo_Z)
 
         
 
@@ -207,8 +210,13 @@ def validate_policynumber():
         policynumber = json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
         print (f'policynumber ====> {policynumber}')
         #print ( f"Y: {int(dob['year'])} M: {int(dob['month'])} D: {int(dob['day'])}" )
-        orig_account = json_data['sessionInfo']['parameters']['account_number']
-       
+
+        #orig_account = json_data['sessionInfo']['parameters']['account_number']
+         # Extract the "account" field
+        orig_account_wo_Z = json_data['sessionInfo']['parameters']['account_number']
+
+        #Add Z only for validation
+        orig_account = "Z"+orig_account_wo_Z
        
 
         validation_text="Please enter your Policy Number."
@@ -277,13 +285,19 @@ def call_llm():
         prompt_llm = json_data['sessionInfo']['parameters']['prompt_to_llm']
         print (f'LLM prompt ====> {prompt_llm}')
         short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
-        orig_account = json_data['sessionInfo']['parameters']['account_number']
+      
         #write chat_log 1
+        # Extract the "account" field
+        orig_account_wo_Z = json_data['sessionInfo']['parameters']['account_number']
+
+        #Add Z only for validation
+        orig_account = "Z"+orig_account_wo_Z
+
         app_helper.write_chat_log(orig_account, short_session,user_time, "U", prompt_llm)
         print (f'LLM prompt ====> {prompt_llm}')
         
         #Call llm API
-        llm_response=app_helper.call_llm(int(orig_account),prompt_llm)
+        llm_response=app_helper.call_llm(orig_account,prompt_llm)
         #Strip new lines
         resp_text=llm_response.replace('\n', ' ')
         print(f"=========> resp_text = {resp_text}")
