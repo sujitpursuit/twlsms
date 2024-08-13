@@ -82,7 +82,7 @@ def validate_account():
             resp_account_number=None
             resp_text="Invalid Account Number"
         else:
-            resp_account_number=orig_account
+            resp_account_number=orig_account_wo_Z
             resp_text=f"Welcome {account_name}"
 
         #write chat_log 2
