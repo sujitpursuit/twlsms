@@ -306,7 +306,7 @@ def call_llm():
         print (f'LLM prompt ====> {prompt_llm}')
         
         #Call llm API
-        llm_response=app_helper.call_llm(orig_account,prompt_llm)
+        llm_response=app_helper.call_llm(short_session,orig_account,prompt_llm)
         #Strip new lines
         resp_text=llm_response.replace('\n', ' ')
         print(f"=========> resp_text = {resp_text}")

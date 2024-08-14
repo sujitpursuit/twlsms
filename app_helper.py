@@ -69,10 +69,12 @@ def checkPolicyNumber(orig_account,policynumber):
    
     return valid_dob
 
-def call_llm(account_no, prompt):
+def call_llm(short_session,account_no, prompt):
 
     # Define the API endpoint
-    url = f"https://insurance-nlq.azurewebsites.net/api/v1/llm/prompt-results/{account_no}"
+    #url = f"https://insurance-nlq.azurewebsites.net/api/v1/llm/prompt-results/{account_no}"
+
+    url = f"https://app-chatbotinsurance-api-uat.azurewebsites.net/api/v1/llm/enhance-results/{short_session}/{account_no}"
 
     # Define the data to be sent in the request body
     payload = {
