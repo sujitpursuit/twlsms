@@ -291,7 +291,7 @@ def validate_otp():
 
     short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
     # Check if the required field exists in the JSON data
-    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'date_of_birth_yyyymmdd' in json_data['sessionInfo']['parameters']:
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'otp' in json_data['sessionInfo']['parameters']:
         # Extract the "Policynumber" field
         otp_temp = json_data['sessionInfo']['parameters']['otp']
         otp_temp=str(otp_temp)
@@ -319,7 +319,7 @@ def validate_otp():
         #write chat_log 1
         app_helper.write_chat_log(orig_account, short_session,user_time, "U", otp)
 
-        otp_sent='667788'
+        otp_sent= "667788"
         #validate OTP
         valid_otp=app_helper.check_otp(otp, otp_sent)
         print(f"OTP Validation result : {valid_otp}")
