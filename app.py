@@ -277,7 +277,7 @@ def validate_policynumber():
 
 
 ####NEW FUNCTION
-@app.route("/dialog/policynumber", methods=['POST'])
+@app.route("/dialog/otp", methods=['POST'])
 def validate_otp():
 
     
