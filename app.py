@@ -58,6 +58,7 @@ def validate_account():
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'account_number' in json_data['sessionInfo']['parameters']:
         # Extract the "account" field
         orig_account_temp =json_data['sessionInfo']['parameters']['account_number']
+        orig_account_temp=str(orig_account_temp)
         print (f'Accoount Number Temp====> {orig_account_temp}')
         #Remove digits coming from phone
         orig_account_wo_Z=orig_account_temp.replace("dtmf_digits_", "")
@@ -211,7 +212,7 @@ def validate_policynumber():
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'date_of_birth_yyyymmdd' in json_data['sessionInfo']['parameters']:
         # Extract the "Policynumber" field
         policynumber_temp = json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
-
+        policynumber_temp=str(policynumber_temp)
       
         print (f'Policy Number Temp====> {policynumber_temp}')
         #Remove digits coming from phone
@@ -293,7 +294,7 @@ def validate_otp():
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'date_of_birth_yyyymmdd' in json_data['sessionInfo']['parameters']:
         # Extract the "Policynumber" field
         otp_temp = json_data['sessionInfo']['parameters']['otp']
-
+        otp_temp=str(otp_temp)
       
         print (f'otp Temp====> {otp_temp}')
         #Remove digits coming from phone
