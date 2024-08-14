@@ -276,6 +276,89 @@ def validate_policynumber():
     
 
 
+####NEW FUNCTION
+@app.route("/dialog/policynumber", methods=['POST'])
+def validate_otp():
+
+    
+    user_time=datetime.now()
+
+    #print (f'=============RECEVIED \n {rcvd_data}')
+
+    json_data = request.get_json()
+    #print (f'=============json data \n {json_data}')
+
+    short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
+    # Check if the required field exists in the JSON data
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'date_of_birth_yyyymmdd' in json_data['sessionInfo']['parameters']:
+        # Extract the "Policynumber" field
+        otp_temp = json_data['sessionInfo']['parameters']['otp']
+
+      
+        print (f'otp Temp====> {otp_temp}')
+        #Remove digits coming from phone
+        otp=otp_temp.replace("dtmf_digits_", "")
+       
+        print (f'otp ====> {otp}')
+        #print ( f"Y: {int(dob['year'])} M: {int(dob['month'])} D: {int(dob['day'])}" )
+
+        #orig_account = json_data['sessionInfo']['parameters']['account_number']
+         # Extract the "account" field
+        orig_account_wo_Z = json_data['sessionInfo']['parameters']['account_number']
+
+        #Add Z only for validation
+        orig_account = "Z"+orig_account_wo_Z
+       
+
+        validation_text="Please enter OTP."
+        #write chat_log 0
+        app_helper.write_chat_log(orig_account, short_session,user_time, "S", validation_text)
+
+        user_time=datetime.now()
+        #write chat_log 1
+        app_helper.write_chat_log(orig_account, short_session,user_time, "U", otp)
+
+        otp_sent='667788'
+        #validate OTP
+        valid_otp=app_helper.check_otp(otp, otp_sent)
+         # Create the WebhookResponse
+        if (valid_otp):
+            resp_text="Your OTP is validated. "
+            resp_otp=otp
+        else:
+            resp_text="Invalid OTP"
+            resp_otp=None
+
+        #write chat_log 2
+        sys_time=datetime.now()
+        app_helper.write_chat_log(orig_account,short_session ,sys_time, "S", resp_text)   
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [f"{resp_text}"]
+                        }
+                    }
+                ]
+            },
+            "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "otp": resp_otp
+                    }         
+
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "OTP invalid "}), 400
+    
+
+
 @app.route("/dialog/llm", methods=['POST'])
 def call_llm():
         

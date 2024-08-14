@@ -69,6 +69,14 @@ def checkPolicyNumber(orig_account,policynumber):
    
     return valid_dob
 
+
+def check_otp(otp,otp_sent):
+    if (otp==otp_sent):
+        return True
+    else:
+        return False
+
+
 def call_llm(short_session,account_no, prompt):
 
     # Define the API endpoint
