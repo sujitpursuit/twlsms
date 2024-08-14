@@ -321,6 +321,7 @@ def validate_otp():
         otp_sent='667788'
         #validate OTP
         valid_otp=app_helper.check_otp(otp, otp_sent)
+        print(f"OTP Validation result : {valid_otp}")
          # Create the WebhookResponse
         if (valid_otp):
             resp_text="Your OTP is validated. "
