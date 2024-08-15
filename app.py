@@ -389,13 +389,15 @@ def transfer_chat():
         orig_account = "Z"+orig_account_wo_Z
         
         url = f"{base_url}/{orig_account}/{short_session}"
-        email_body=f"Click on {url} to go to continue your conversation in the Insurance Chatbot "
+        email_body=f"\n\nWelcome from Hastings IVR!\n\n\nPlease click on {url} to go to continue your conversation in the Insurance Chatbot PolicyPal. \n\n"
         print(f"email body => {email_body}")
-        #email_id=app_helper.get_email(orig_account)
-        email_id="sujit2050@yahoo.com"
-        print(f"email to => {email_id}")
 
-        app_helper.send_email2("Transfering session to chat",email_body, ["sujit2050@yahoo.com"], "policypal.otp@gmail.com", "wwtn qrfj mmjk gagm")
+        app_helper.send_email_transfer(email_body)
+        #email_id=app_helper.get_email(orig_account)
+        #email_id="sujit2050@yahoo.com"
+        #print(f"email to => {email_id}")
+
+        #app_helper.send_email2("Transfering session to chat",email_body, ["sujit2050@yahoo.com"], "policypal.otp@gmail.com", "wwtn qrfj mmjk gagm")
         #app_helper.send_email(mail,"Transfering session to chat", email_body,"sujit.sarkar@mayagic.ai")
         #app_helper.send_email(mail,"Transfering session to chat", email_body,"sujit2050@yahoo.com")
         #app_helper.send_email(mail,"Transfering session to chat",email_body,email_id)

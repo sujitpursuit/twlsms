@@ -106,7 +106,7 @@ def call_llm(short_session,account_no, prompt):
             summary=data['summary']
         else:
             summary=data['response']
-            
+
         print(f"\nSummary => {summary}")
         return_text=summary
     else:
@@ -172,6 +172,53 @@ def send_email2(email_subject,email_body, recipients, sender, password):
 
         return 'Email sent successfully!'
   
+import random
+import smtplib
+import json
+
+
+
+
+from dotenv import load_dotenv, find_dotenv
+import os
+
+
+load_dotenv(find_dotenv())
+
+app_pwd = os.getenv('APP_PASSWORD')
+# sender = os.getenv('MAIL_USERNAME')
+# email_list = json.loads(os.environ['EMAIL_LIST'])
+#print(f"sender : {sender}  & pwd : {app_pwd} and email lists : {email_list}")
+
+def generate_otp():
+    """
+    Create a six digit numeric OTP for verification of email
+    :parms - Not argument required
+    :rtypes - 6 digits numeric otp e.g. 987789
+    """
+    return str(random.randint(100000, 999999))
+
+def send_email_transfer(message):
+    """
+    Send OTP to receiver email
+    :parms - receiver email, message
+    :rtypes - None
+    """
+
+    #EMAIL_LIST='[ "sujit_s@pursuitsoftware.biz",  "surbhi_d@pursuitsoftware.com"]'
+    # MAIL_USERNAME=
+    # MAIL_PASSWORD=
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(user="policypal.otp@gmail.com", password=app_pwd)
+    #curr_otp = generate_otp()
+    receivers = [ "sujit_s@pursuitsoftware.biz",  "sujit2050@yahoo.com"]
+    body = message
+    subject = "Conversation Transfer from IVR to PolicyPal"
+    server.sendmail('PolicyPal ', receivers, f"Subject : {subject} \n\n{body}")
+    server.quit()
+    return 
 
 import re
 
