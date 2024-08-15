@@ -423,7 +423,7 @@ def transfer_chat():
 def send_email():
     
     #ret_msg=app_helper.send_email(mail,"Hello from Flaskmail","This is test email from Flask email","sujit.sarkar@Mayagic.ai")
-    ret_msg=app_helper.send_email2("Transfer from PolicyPal","This is test email from Flask smtp mail", ["sujit2050@yahoo.com"], "policypal.otp@gmail.com", "wwtn qrfj mmjk gagm")
+    ret_msg=app_helper.send_email2("Transfer from PolicyPal","This is test email from Flask smtp mail", ["sujit2050@yahoo.com","sujit_s@pursuitsoftware.biz"], "policypal.otp@gmail.com", "wwtn qrfj mmjk gagm")
     return str(ret_msg)
 
 

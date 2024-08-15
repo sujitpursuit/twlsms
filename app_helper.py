@@ -102,7 +102,11 @@ def call_llm(short_session,account_no, prompt):
     if response.status_code == 200:
         # Parse the JSON response
         data = response.json()
-        summary=data['summary']
+        if  'summary' in data:
+            summary=data['summary']
+        else:
+            summary=data['response']
+            
         print(f"\nSummary => {summary}")
         return_text=summary
     else:
