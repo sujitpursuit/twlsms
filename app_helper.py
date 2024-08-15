@@ -6,6 +6,9 @@ import os
 import datetime
 import requests
 from flask_mail import Mail, Message
+import smtplib
+from email.mime.text import MIMEText
+
 
 # load dotenv 
 load_dotenv()
@@ -18,6 +21,7 @@ try:
     print('DB CONNETION SUCCESS')
 except:
     print('Error in connection')
+
 
  
 
@@ -152,3 +156,15 @@ def send_email(mail, email_subject,email_body, recipient):
         return 'Email sent successfully!'
     except Exception as e:
         return str(e)
+    
+def send_email2(email_subject,email_body, recipients, sender, password):
+    msg=MIMEText(email_body)
+    msg['Subject']=email_subject
+    msg['From']=sender
+    msg['To']=','.join(recipients)
+    with smtplib.SMTP_SSL('smtp.gmail.com',465)  as smtp_server:
+        smtp_server.login(sender,password)
+        smtp_server.sendmail(sender,recipients, msg.as_string())
+
+        return 'Email sent successfully!'
+  

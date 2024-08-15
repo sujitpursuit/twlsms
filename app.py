@@ -241,7 +241,7 @@ def validate_policynumber():
         valid_dob=app_helper.checkPolicyNumber(orig_account,policynumber)
          # Create the WebhookResponse
         if (valid_dob):
-            resp_text="Your access is validated. "
+            resp_text="Your Policy Number is validated. "
             resp_dob=policynumber
         else:
             resp_text="Invalid PolicyNumber"
@@ -442,15 +442,28 @@ def transfer_chat():
         prompt_llm = json_data['sessionInfo']['parameters']['prompt_to_llm']
         print (f'Transfer to chat {prompt_llm}')
 
-        base_url="https://insurancenlq.azurewebsites.net/loadchat"
+       #base_url="https://insurancenlq.azurewebsites.net/loadchat"
+        base_url="https://app-chatbotinsurance-ui-uat.azurewebsites.net/loadchat"#/10002/865717-cef-d5b-708-efdf157d9"
         short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
-        orig_account = int(json_data['sessionInfo']['parameters']['account_number'])
+
+           #write chat_log 1
+        # Extract the "account" field
+        orig_account_wo_Z = json_data['sessionInfo']['parameters']['account_number']
+
+        #Add Z only for validation
+        orig_account = "Z"+orig_account_wo_Z
+        
         url = f"{base_url}/{orig_account}/{short_session}"
         email_body=f"Click on {url} to go to continue your conversation in the Insurance Chatbot "
         print(f"email body => {email_body}")
-        email_id=app_helper.get_email(orig_account)
+        #email_id=app_helper.get_email(orig_account)
+        email_id="sujit2050@yahoo.com"
         print(f"email to => {email_id}")
-        app_helper.send_email(mail,"Transfering session to chat",email_body,email_id)
+
+        app_helper.send_email2("Transfering session to chat",email_body, ["sujit2050@yahoo.com"], "policypal.otp@gmail.com", "wwtn qrfj mmjk gagm")
+        #app_helper.send_email(mail,"Transfering session to chat", email_body,"sujit.sarkar@mayagic.ai")
+        #app_helper.send_email(mail,"Transfering session to chat", email_body,"sujit2050@yahoo.com")
+        #app_helper.send_email(mail,"Transfering session to chat",email_body,email_id)
 
          # Create the WebhookResponse
      
@@ -459,7 +472,7 @@ def transfer_chat():
                 "messages": [
                     {
                         "text": {
-                            "text": [f"Please check your email to see instructions to transfer your current conversation to Insurance chatbot"]
+                            "text": [f"Please check your email to see instructions to transfer your current conversation to Policy Pal"]
                         }
                     }
                 ]
@@ -474,8 +487,8 @@ def transfer_chat():
 @app.route('/send-email')
 def send_email():
     
-    ret_msg=app_helper.send_email(mail,"Hello from Flaskmail","This is test email from Flask email","sujit2050@yahoo.com")
-   
+    #ret_msg=app_helper.send_email(mail,"Hello from Flaskmail","This is test email from Flask email","sujit.sarkar@Mayagic.ai")
+    ret_msg=app_helper.send_email2("Transfer from PolicyPal","This is test email from Flask smtp mail", ["sujit2050@yahoo.com"], "policypal.otp@gmail.com", "wwtn qrfj mmjk gagm")
     return str(ret_msg)
 
 
