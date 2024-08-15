@@ -58,8 +58,9 @@ def validate_account():
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'account_number' in json_data['sessionInfo']['parameters']:
         # Extract the "account" field
         orig_account_temp =json_data['sessionInfo']['parameters']['account_number']
-        orig_account_temp=str(orig_account_temp)
-        print (f'Accoount Number Temp====> {orig_account_temp}')
+        print (f'Accoount Number received====> {orig_account_temp}')
+        orig_account_temp=str(orig_account_temp).replace(" ","") # Replace  " " in string
+        print (f'Accoount Number without blank====> {orig_account_temp}')
         #Remove digits coming from phone
         orig_account_wo_Z=orig_account_temp.replace("dtmf_digits_", "")
         print (f'Accoount Number without z====> {orig_account_wo_Z}')
@@ -212,9 +213,11 @@ def validate_policynumber():
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'date_of_birth_yyyymmdd' in json_data['sessionInfo']['parameters']:
         # Extract the "Policynumber" field
         policynumber_temp = json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
-        policynumber_temp=str(policynumber_temp)
+        print (f'Policy Number received====> {policynumber_temp}')
+
+        policynumber_temp=str(policynumber_temp).replace(" ","")
       
-        print (f'Policy Number Temp====> {policynumber_temp}')
+        print (f'Policy Number after blank removal====> {policynumber_temp}')
         #Remove digits coming from phone
         policynumber=policynumber_temp.replace("dtmf_digits_", "")
        
@@ -292,11 +295,14 @@ def validate_otp():
     short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'otp' in json_data['sessionInfo']['parameters']:
-        # Extract the "Policynumber" field
+        # Extract the "OTP" field
+
+
         otp_temp = json_data['sessionInfo']['parameters']['otp']
-        otp_temp=str(otp_temp)
+        print (f'otp Received====> {otp_temp}')
+        otp_temp=str(otp_temp).replace(" ","")
       
-        print (f'otp Temp====> {otp_temp}')
+        print (f'otp after blank removal====> {otp_temp}')
         #Remove digits coming from phone
         otp=otp_temp.replace("dtmf_digits_", "")
        
