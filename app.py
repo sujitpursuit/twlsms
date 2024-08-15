@@ -59,11 +59,12 @@ def validate_account():
         # Extract the "account" field
         orig_account_temp =json_data['sessionInfo']['parameters']['account_number']
         print (f'Accoount Number received====> {orig_account_temp}')
-        orig_account_temp=str(orig_account_temp).replace(" ","") # Replace  " " in string
-        print (f'Accoount Number without blank====> {orig_account_temp}')
+        orig_account_wo_Z=app_helper.remove_non_numeric(str(orig_account_temp))
+
+        print (f'Accoount Number with only numeric chars====> {orig_account_wo_Z}')
         #Remove digits coming from phone
-        orig_account_wo_Z=orig_account_temp.replace("dtmf_digits_", "")
-        print (f'Accoount Number without z====> {orig_account_wo_Z}')
+        #orig_account_wo_Z=orig_account_temp.replace("dtmf_digits_", "")
+        #print (f'Accoount Number without z====> {orig_account_wo_Z}')
         #Add Z only for validation
         orig_account = "Z"+orig_account_wo_Z
         print (f'FINAL Accoount Number====> {orig_account}')
@@ -122,80 +123,6 @@ def validate_account():
         return jsonify({"error": "Account field not found"}), 400
     
 
-@app.route("/dialog/dob", methods=['POST'])
-def validate_dob():
-
-    
-    user_time=datetime.now()
-
-    #print (f'=============RECEVIED \n {rcvd_data}')
-
-    json_data = request.get_json()
-    #print (f'=============json data \n {json_data}')
-
-    short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
-    # Check if the required field exists in the JSON data
-    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'date_of_birth_yyyymmdd' in json_data['sessionInfo']['parameters']:
-        # Extract the "account" field
-        dob = json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
-        print (f'DOB ====> {dob}')
-        #print ( f"Y: {int(dob['year'])} M: {int(dob['month'])} D: {int(dob['day'])}" )
-        orig_account = json_data['sessionInfo']['parameters']['account_number']
-       
-        input_month = int(dob['month'])
-        input_day=int(dob['day'])
-        input_year=int(dob['year'] )
-        input_dob_str=f"{input_year}{input_month:02}{input_day:02}"
-        print(f"INPUT DOB {input_dob_str}")
-
-        validation_text="Please enter your Date of Birth."
-        #write chat_log 0
-        app_helper.write_chat_log(orig_account, short_session,user_time, "S", validation_text)
-
-        user_time=datetime.now()
-        #write chat_log 1
-        app_helper.write_chat_log(orig_account, short_session,user_time, "U", input_dob_str)
-
-        #validate account
-        valid_dob=app_helper.checkDOB(orig_account,input_year,input_month, input_day)
-         # Create the WebhookResponse
-        if (valid_dob):
-            resp_text="Your access is validated. "
-            resp_dob=dob
-        else:
-            resp_text="Invalid Date of Birth"
-            resp_dob=None
-
-        #write chat_log 2
-        sys_time=datetime.now()
-        app_helper.write_chat_log(orig_account,short_session ,sys_time, "S", resp_text)   
-        response = {
-            "fulfillment_response": {
-                "messages": [
-                    {
-                        "text": {
-                            "text": [f"{resp_text}"]
-                        }
-                    }
-                ]
-            },
-            "sessionInfo":{
-
-                
-                    "session": json_data['sessionInfo']['session'],
-                    "parameters": {
-                        "date_of_birth_yyyymmdd": resp_dob
-                    }         
-
-            }
-        }
-
-        return jsonify(response)
-    else:
-        return jsonify({"error": "Date of birth field not found"}), 400
-    
-
-
 
 @app.route("/dialog/policynumber", methods=['POST'])
 def validate_policynumber():
@@ -215,13 +142,15 @@ def validate_policynumber():
         policynumber_temp = json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
         print (f'Policy Number received====> {policynumber_temp}')
 
-        policynumber_temp=str(policynumber_temp).replace(" ","")
       
-        print (f'Policy Number after blank removal====> {policynumber_temp}')
-        #Remove digits coming from phone
-        policynumber=policynumber_temp.replace("dtmf_digits_", "")
+        policynumber= app_helper.remove_non_numeric(str(policynumber_temp))
+      
+        print (f'Policy Number with only numeric characters====> {policynumber}')
+
+        #Remove dtmfdigits coming from phone
+        #policynumber=policynumber_temp.replace("dtmf_digits_", "")
        
-        print (f'policynumber ====> {policynumber}')
+        #print (f'policynumber ====> {policynumber}')
         #print ( f"Y: {int(dob['year'])} M: {int(dob['month'])} D: {int(dob['day'])}" )
 
         #orig_account = json_data['sessionInfo']['parameters']['account_number']
@@ -301,12 +230,12 @@ def validate_otp():
         otp_temp = json_data['sessionInfo']['parameters']['otp']
         print (f'otp Received====> {otp_temp}')
         otp_temp=str(otp_temp).replace(" ","")
-      
-        print (f'otp after blank removal====> {otp_temp}')
+        otp=app_helper.remove_non_numeric(str(otp_temp))
+        print (f'otp after non numeric removal====> {otp}')
         #Remove digits coming from phone
-        otp=otp_temp.replace("dtmf_digits_", "")
+        #otp=otp_temp.replace("dtmf_digits_", "")
        
-        print (f'otp ====> {otp}')
+        #print (f'otp ====> {otp}')
         #print ( f"Y: {int(dob['year'])} M: {int(dob['month'])} D: {int(dob['day'])}" )
 
         #orig_account = json_data['sessionInfo']['parameters']['account_number']
@@ -496,6 +425,80 @@ def send_email():
     #ret_msg=app_helper.send_email(mail,"Hello from Flaskmail","This is test email from Flask email","sujit.sarkar@Mayagic.ai")
     ret_msg=app_helper.send_email2("Transfer from PolicyPal","This is test email from Flask smtp mail", ["sujit2050@yahoo.com"], "policypal.otp@gmail.com", "wwtn qrfj mmjk gagm")
     return str(ret_msg)
+
+
+@app.route("/dialog/dob", methods=['POST'])
+def validate_dob():
+
+    
+    user_time=datetime.now()
+
+    #print (f'=============RECEVIED \n {rcvd_data}')
+
+    json_data = request.get_json()
+    #print (f'=============json data \n {json_data}')
+
+    short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
+    # Check if the required field exists in the JSON data
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'date_of_birth_yyyymmdd' in json_data['sessionInfo']['parameters']:
+        # Extract the "account" field
+        dob = json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
+        print (f'DOB ====> {dob}')
+        #print ( f"Y: {int(dob['year'])} M: {int(dob['month'])} D: {int(dob['day'])}" )
+        orig_account = json_data['sessionInfo']['parameters']['account_number']
+       
+        input_month = int(dob['month'])
+        input_day=int(dob['day'])
+        input_year=int(dob['year'] )
+        input_dob_str=f"{input_year}{input_month:02}{input_day:02}"
+        print(f"INPUT DOB {input_dob_str}")
+
+        validation_text="Please enter your Date of Birth."
+        #write chat_log 0
+        app_helper.write_chat_log(orig_account, short_session,user_time, "S", validation_text)
+
+        user_time=datetime.now()
+        #write chat_log 1
+        app_helper.write_chat_log(orig_account, short_session,user_time, "U", input_dob_str)
+
+        #validate account
+        valid_dob=app_helper.checkDOB(orig_account,input_year,input_month, input_day)
+         # Create the WebhookResponse
+        if (valid_dob):
+            resp_text="Your access is validated. "
+            resp_dob=dob
+        else:
+            resp_text="Invalid Date of Birth"
+            resp_dob=None
+
+        #write chat_log 2
+        sys_time=datetime.now()
+        app_helper.write_chat_log(orig_account,short_session ,sys_time, "S", resp_text)   
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [f"{resp_text}"]
+                        }
+                    }
+                ]
+            },
+            "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "date_of_birth_yyyymmdd": resp_dob
+                    }         
+
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "Date of birth field not found"}), 400
+    
 
 
 

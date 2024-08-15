@@ -168,3 +168,8 @@ def send_email2(email_subject,email_body, recipients, sender, password):
 
         return 'Email sent successfully!'
   
+
+import re
+
+def remove_non_numeric(s):
+    return re.sub(r'\D', '', s)
