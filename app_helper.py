@@ -213,7 +213,7 @@ def send_email_transfer(message):
     server.starttls()
     server.login(user="policypal.otp@gmail.com", password=app_pwd)
     #curr_otp = generate_otp()
-    receivers = [ "sujit_s@pursuitsoftware.biz", "sujit.sarkar@mayagic.ai", "sujit2050@yahoo.com", "basudeb.pal@pursuitsoftware.biz"]
+    receivers = [ "sujit_s@pursuitsoftware.biz", "sujit.sarkar@mayagic.ai", "shwetnisha_b@pursuitsoftware.biz","surbhi_d@pursuitsoftware.com"]
     body = message
     subject = "Conversation Transfer from IVR to PolicyPal"
     server.sendmail('PolicyPal ', receivers, f"Subject : {subject} \n\n{body}")
