@@ -80,7 +80,7 @@ def check_otp(otp,otp_sent):
     else:
         return False
 
-
+import base64
 def call_llm(short_session,account_no, prompt):
 
     # Define the API endpoint
@@ -96,7 +96,29 @@ def call_llm(short_session,account_no, prompt):
     # Make the GET request
     #response = requests.get(url)
     # Make the POST request
-    response = requests.post(url, json=payload)
+
+    #form header
+    #{"account_number":"Z011382938","policy_number":"1382938","customer_name":"Dennis PRONSCHINSKE",
+    # "customer_address":"N38558 ST RD 93 121 INDEPENDENCE WI 54747"}  /// encoded in base64.
+    header_llm_request={
+        "account_number":account_no,
+        "policy_number" : "999999",
+        "customer_name": "ZZZZZZZZZ",
+        "customer_address":"ZZZZZZZZZZZZ"
+
+
+    }
+
+    # Convert dictionary to JSON string
+    json_data = json.dumps(header_llm_request)
+    
+    # Encode JSON string to Base64
+    json_data_bytes=json_data.encode()
+    header_llm_request_encoded = base64.b64encode(json_data_bytes)
+    headers={
+        "sess":header_llm_request_encoded
+    }
+    response = requests.post(url, json=payload, headers=headers)
 
     # Check if the request was successful
     if response.status_code == 200:
