@@ -81,7 +81,7 @@ def check_otp(otp,otp_sent):
         return False
 
 import base64
-def call_llm(short_session,account_no, prompt):
+def call_llm(short_session,account_no, account_name,policy_number,prompt):
 
     # Define the API endpoint
     #url = f"https://insurance-nlq.azurewebsites.net/api/v1/llm/prompt-results/{account_no}"
@@ -102,9 +102,9 @@ def call_llm(short_session,account_no, prompt):
     # "customer_address":"N38558 ST RD 93 121 INDEPENDENCE WI 54747"}  /// encoded in base64.
     header_llm_request={
         "account_number":account_no,
-        "policy_number" : "999999",
-        "customer_name": "ZZZZZZZZZ",
-        "customer_address":"ZZZZZZZZZZZZ"
+        "policy_number" : policy_number,
+        "customer_name": account_name,
+        "customer_address":"NA-IVR"
 
 
     }

@@ -322,11 +322,14 @@ def call_llm():
         #Add Z only for validation
         orig_account = "Z"+orig_account_wo_Z
 
+      
         app_helper.write_chat_log(orig_account, short_session,user_time, "U", prompt_llm)
         print (f'LLM prompt ====> {prompt_llm}')
         
+        account_name=json_data['sessionInfo']['parameters']['account_name']
+        policy_number=json_data['sessionInfo']['parameters']['date_of_birth_yyyymmdd']
         #Call llm API
-        llm_response=app_helper.call_llm(short_session,orig_account,prompt_llm)
+        llm_response=app_helper.call_llm(short_session,orig_account,account_name,policy_number,prompt_llm)
         #Strip new lines
         resp_text=llm_response.replace('\n', ' ')
         print(f"=========> resp_text = {resp_text}")
