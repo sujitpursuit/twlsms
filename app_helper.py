@@ -22,7 +22,7 @@ try:
 except:
     print('Error in connection')
 
-
+basic_auth_creds=os.getenv('BASIC_AUTH')
  
 
 def getAccountDetails(accountNumber):
@@ -86,7 +86,11 @@ def call_llm(short_session,account_no, account_name,policy_number,prompt):
     # Define the API endpoint
     #url = f"https://insurance-nlq.azurewebsites.net/api/v1/llm/prompt-results/{account_no}"
 
-    url = f"https://app-chatbotinsurance-api-uat.azurewebsites.net/api/v1/llm/enhance-results/{short_session}/{account_no}"
+    #UAT url = 
+    url=f"https://app-chatbotinsurance-api-uat.azurewebsites.net/api/v1/llm/enhance-results/{short_session}/{account_no}"
+    
+    #DEV URL:
+    #url=f"https://app-chatbotinsurance-admin-api-uat-dev.azurewebsites.net/api/v1/llm/enhance-results/{short_session}/{account_no}"
 
     # Define the data to be sent in the request body
     payload = {
@@ -115,8 +119,16 @@ def call_llm(short_session,account_no, account_name,policy_number,prompt):
     # Encode JSON string to Base64
     json_data_bytes=json_data.encode()
     header_llm_request_encoded = base64.b64encode(json_data_bytes)
+
+    ##Encode basic auth username: admin:admin@123
+    basic_auth_bytes=basic_auth_creds.encode()
+    basic_auth_bytes_encoded = base64.b64encode(basic_auth_bytes)
+    #print(f"Encoded Auth header ===>>{basic_auth_bytes_encoded}")
+    basic_auth_str_decoded = basic_auth_bytes_encoded.decode('utf-8')
+    #print(f"Encoded Auth header dcoded ===>>{basic_auth_str_decoded}")
     headers={
-        "sess":header_llm_request_encoded
+        "sess":header_llm_request_encoded,
+        "Authorization":"Basic " +basic_auth_str_decoded
     }
     response = requests.post(url, json=payload, headers=headers)
 
