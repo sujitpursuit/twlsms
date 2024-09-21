@@ -524,26 +524,9 @@ def validate_patient():
         patient_dob = json_data['sessionInfo']['parameters']['patient_dob']
         print (f'patient_dob received====> {patient_dob}')
         patient_last_name=json_data['sessionInfo']['parameters']['patient_last_name']
-        print (f'patient_last_name received====> {patient_dob}')
+        print (f'patient_last_name received====> {patient_last_name}')
 
       
-        #policynumber= app_helper.remove_non_numeric(str(policynumber_temp))
-      
-        #print (f'Policy Number with only numeric characters====> {policynumber}')
-
-        #Remove dtmfdigits coming from phone
-        #policynumber=policynumber_temp.replace("dtmf_digits_", "")
-       
-        #print (f'policynumber ====> {policynumber}')
-        #print ( f"Y: {int(dob['year'])} M: {int(dob['month'])} D: {int(dob['day'])}" )
-
-        #orig_account = json_data['sessionInfo']['parameters']['account_number']
-         # Extract the "account" field
-        #orig_account_wo_Z = json_data['sessionInfo']['parameters']['account_number']
-
-        #Add Z only for validation
-        #orig_account = "Z"+orig_account_wo_Z
-       
 
         validation_text="Please enter your date of borth."
         #write chat_log 0

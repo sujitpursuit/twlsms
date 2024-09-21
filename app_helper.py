@@ -14,7 +14,7 @@ from email.mime.text import MIMEText
 load_dotenv()
 #print(os.getenv('DB_SERVER'))
 con_string = 'DRIVER={ODBC Driver 18 for SQL Server};'+'SERVER='+os.getenv('DB_SERVER') +';'+'Database='+os.getenv('DB_NAME') +';'+'UID='+os.getenv('DB_USERNAME') +';' +'PWD='+os.getenv('DB_PWD') +';'
-print(con_string) #for debugging only
+
 global conn 
 try:
     conn = pyodbc.connect(con_string)
@@ -23,7 +23,7 @@ except:
     print('Error in connection')
 
 con_string_clinic = 'DRIVER={ODBC Driver 18 for SQL Server};'+'SERVER='+os.getenv('DB_SERVER_CLINIC') +';'+'Database='+os.getenv('DB_NAME_CLINIC') +';'+'UID='+os.getenv('DB_USERNAME_CLINIC') +';' +'PWD='+os.getenv('DB_PWD_CLINIC') +';'
-print(con_string_clinic) #for debugging only
+
 
 global conn_clinic 
 try:
@@ -82,7 +82,8 @@ def checkPolicyNumber(orig_account,policynumber):
 
 def checkPatientDetails(patient_last_name,patient_dob):
    # query = f"SELECT [PatientID] FROM [clinicapt].[Patients] WHERE LastName =\'{patient_last_name}\' AND DateOfBirth = \'{patient_dob}\'"
-    query = f"SELECT [PatientID] FROM [clinicapt].[Patients] WHERE LastName =\'{patient_last_name}\' "
+    print(f'patient last name in checkpatientdetails {patient_last_name}')
+    query = f"SELECT TOP 1 [PatientID] FROM [clinicapt].[Patients] WHERE LastName =\'{patient_last_name}\' "
      
     #'1990-03-15';  -- Replace with the actual date of birth
     df = pd.read_sql(sql=query ,con=conn_clinic)
