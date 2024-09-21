@@ -510,17 +510,13 @@ def validate_dob():
 def validate_patient():
 
     
-    user_time=datetime.now()
-
-    #print (f'=============RECEVIED \n {rcvd_data}')
-
     json_data = request.get_json()
     #print (f'=============json data \n {json_data}')
 
     short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'patient_dob' in json_data['sessionInfo']['parameters']:
-        # Extract the "Policynumber" field
+        # Extract the  field
         patient_dob = json_data['sessionInfo']['parameters']['patient_dob']
         print (f'patient_dob received====> {patient_dob}')
         patient_last_name=json_data['sessionInfo']['parameters']['patient_last_name']
@@ -529,13 +525,7 @@ def validate_patient():
       
 
         validation_text="Please enter your date of borth."
-        #write chat_log 0
-        #app_helper.write_chat_log(orig_account, short_session,user_time, "S", validation_text)
-
-        #user_time=datetime.now()
-        #write chat_log 1
-        #app_helper.write_chat_log(orig_account, short_session,user_time, "U", policynumber)
-
+      
         #validate account
         valid_patient=app_helper.checkPatientDetails(patient_last_name,patient_dob)
          # Create the WebhookResponse
@@ -548,9 +538,7 @@ def validate_patient():
             resp_dob=None
             resp_patient_last_name=None
             
-        #write chat_log 2
-        #sys_time=datetime.now()
-        #app_helper.write_chat_log(orig_account,short_session ,sys_time, "S", resp_text)   
+  
         response = {
             "fulfillment_response": {
                 "messages": [
@@ -576,6 +564,63 @@ def validate_patient():
         return jsonify(response)
     else:
         return jsonify({"error": "Patient record not found"}), 400
+
+
+
+@app.route("/dialog/clinic/validate/doctor", methods=['POST'])
+def validate_doctor():
+
+    
+    json_data = request.get_json()
+    #print (f'=============json data \n {json_data}')
+
+    short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
+    # Check if the required field exists in the JSON data
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'doctor_name' in json_data['sessionInfo']['parameters']:
+        # Extract the  field
+        doctor_name = json_data['sessionInfo']['parameters']['doctor_name']
+        print (f'doctor_name received====> {doctor_name}')
+        
+
+        doctor_id=app_helper.checkDoctor(doctor_name)
+         # Create the WebhookResponse
+        if (doctor_id != None):
+            resp_text=f"Doctor {doctor_name} available for appointments"
+            resp_doctor_name=doctor_name
+        else:
+            resp_text=f"Unable to find Doctor {doctor_name} details"
+            resp_doctor_name=None
+            
+            
+  
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [f"{resp_text}"]
+                        }
+                    }
+                ]
+            },
+            "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "dcotor_name": resp_doctor_name,
+                     
+                    }         
+
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "Patient record not found"}), 400
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

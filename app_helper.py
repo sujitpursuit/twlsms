@@ -95,6 +95,30 @@ def checkPatientDetails(patient_last_name,patient_dob):
         valid_patient=False
    
     return valid_patient
+def checkDoctor(doctor_name):
+
+    first_name, last_name = doctor_name.split(" ")
+
+    # Output the split values
+    print(f"Doctor First Name: {first_name}")
+    print(f"Doctor Last Name: {last_name}")
+    url=f"https://app-doctorsappointment-api-dev.azurewebsites.net/clinicapt/api/validation/doctor/{first_name}/{last_name}"
+    
+    
+    response = requests.post(url)
+    doctorID=None
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+        if  'DoctorID' in data:
+            doctorID=data['DoctorID']
+
+        print(f"DoctorID => {doctorID}")
+  
+
+    return doctorID
+
 
 def check_otp(otp,otp_sent):
     if (otp==otp_sent):
