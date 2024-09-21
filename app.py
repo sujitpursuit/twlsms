@@ -654,7 +654,7 @@ def call_clinic_llm_slots():
                 
                     "session": json_data['sessionInfo']['session'],
                     "parameters": {
-                        "prompt_to_llm": None
+                        "slot_query": None
                     }         
 
             }
@@ -698,7 +698,7 @@ def call_clinic_llm_select_slot():
                 
                     "session": json_data['sessionInfo']['session'],
                     "parameters": {
-                        "prompt_to_llm": None
+                        "selected_slot": None
                     }         
 
             }
