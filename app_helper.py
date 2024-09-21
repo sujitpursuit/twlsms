@@ -127,6 +127,7 @@ def get_doctor_slots( doctor_id,slot_prompt):
     payload = {
         "user_query" : slot_prompt
     }
+    print(f"prompt payload {payload}")
 
     response = requests.post(url,json=payload)
     # Check if the request was successful

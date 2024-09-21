@@ -665,5 +665,50 @@ def call_clinic_llm_slots():
         return jsonify({"error": "prompt_llm not found"}), 400  
 
 
+@app.route("/dialog/clinic/llm/seletedslot", methods=['POST'])
+def call_clinic_llm_select_slot():
+  
+  
+
+    json_data = request.get_json()
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'selected_slot' in json_data['sessionInfo']['parameters']:
+        # Extract the "llm" field
+        selected_slot = json_data['sessionInfo']['parameters']['selected_slot']
+        print (f'calling LLM for doctor_id {doctor_id} with prompt {selected_slot}')
+        
+        llm_response=app_helper.get_doctor_slots( doctor_id,selected_slot)
+        #Strip new lines
+        resp_text=llm_response.replace('\n', ' ')
+        print(f"=========> resp_text = {resp_text}")
+       
+         # Create the WebhookResponse
+     
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [resp_text]
+                        }
+                    }
+                ]
+            },
+                     "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "prompt_to_llm": None
+                    }         
+
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "prompt_llm not found"}), 400  
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
