@@ -654,7 +654,7 @@ def call_clinic_llm_slots():
                 
                     "session": json_data['sessionInfo']['session'],
                     "parameters": {
-                        "slot_query": None
+                        "slot_query_answered": "True"
                     }         
 
             }
@@ -662,7 +662,7 @@ def call_clinic_llm_slots():
 
         return jsonify(response)
     else:
-        return jsonify({"error": "prompt_llm not found"}), 400  
+        return jsonify({"error": "slot_query not found"}), 400  
 
 
 @app.route("/dialog/clinic/llm/seletedslot", methods=['POST'])
@@ -698,7 +698,7 @@ def call_clinic_llm_select_slot():
                 
                     "session": json_data['sessionInfo']['session'],
                     "parameters": {
-                        "selected_slot": None
+                        "selected_slot_booked": "True"
                     }         
 
             }
@@ -706,7 +706,7 @@ def call_clinic_llm_select_slot():
 
         return jsonify(response)
     else:
-        return jsonify({"error": "prompt_llm not found"}), 400  
+        return jsonify({"error": "selected_slot not found"}), 400  
 
 
 
