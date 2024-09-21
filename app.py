@@ -608,7 +608,7 @@ def validate_doctor():
                 
                     "session": json_data['sessionInfo']['session'],
                     "parameters": {
-                        "dcotor_name": resp_doctor_name,
+                        "doctor_name": resp_doctor_name,
                      
                     }         
 
