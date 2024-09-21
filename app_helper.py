@@ -12,15 +12,25 @@ from email.mime.text import MIMEText
 
 # load dotenv 
 load_dotenv()
-print(os.getenv('DB_SERVER'))
+#print(os.getenv('DB_SERVER'))
 con_string = 'DRIVER={ODBC Driver 18 for SQL Server};'+'SERVER='+os.getenv('DB_SERVER') +';'+'Database='+os.getenv('DB_NAME') +';'+'UID='+os.getenv('DB_USERNAME') +';' +'PWD='+os.getenv('DB_PWD') +';'
-#print(con_string) #for debugging only
+print(con_string) #for debugging only
 global conn 
 try:
     conn = pyodbc.connect(con_string)
     print('DB CONNETION SUCCESS')
 except:
     print('Error in connection')
+
+con_string_clinic = 'DRIVER={ODBC Driver 18 for SQL Server};'+'SERVER='+os.getenv('DB_SERVER_CLINIC') +';'+'Database='+os.getenv('DB_NAME_CLINIC') +';'+'UID='+os.getenv('DB_USERNAME_CLINIC') +';' +'PWD='+os.getenv('DB_PWD_CLINIC') +';'
+print(con_string_clinic) #for debugging only
+
+global conn_clinic 
+try:
+    conn_clinic = pyodbc.connect(con_string_clinic)
+    print('CLINIC DB CONNETION SUCCESS')
+except:
+    print('Error in CLINC DB connection')
 
 basic_auth_creds=os.getenv('BASIC_AUTH')
  
@@ -58,21 +68,32 @@ def checkDOB(accountNumber,y,m,d):
    
     return valid_dob
 
-#print(getAccountDetails(10002))
 def checkPolicyNumber(orig_account,policynumber):
     query = f"SELECT  [PolicyNumber] as policynumber FROM [PolicyD].[PolicyDetails] WHERE AccountNumber=\'{orig_account}\' AND PolicyNumber=\'{policynumber}\'"
     df = pd.read_sql(sql=query ,con=conn)
     if (df.size > 0): #Found policy in account
-
-        print (f"policynumber from sql ==>{ df['policynumber'].iloc[0] }   " )
-        
-        valid_dob=True
-       
+        print (f"policynumber from sql ==>{ df['policynumber'].iloc[0] }   " )        
+        valid_dob=True  
     else:
         valid_dob=False
    
     return valid_dob
 
+
+def checkPatientDetails(patient_last_name,patient_dob):
+   # query = f"SELECT [PatientID] FROM [clinicapt].[Patients] WHERE LastName =\'{patient_last_name}\' AND DateOfBirth = \'{patient_dob}\'"
+    query = f"SELECT [PatientID] FROM [clinicapt].[Patients] WHERE LastName =\'{patient_last_name}\' "
+     
+    #'1990-03-15';  -- Replace with the actual date of birth
+    df = pd.read_sql(sql=query ,con=conn_clinic)
+    if (df.size > 0): #Found policy in account
+        print (f"PatientID from sql ==>{ df['PatientID'].iloc[0] }   " )
+        valid_patient=True
+       
+    else:
+        valid_patient=False
+   
+    return valid_patient
 
 def check_otp(otp,otp_sent):
     if (otp==otp_sent):

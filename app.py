@@ -506,6 +506,93 @@ def validate_dob():
     
 
 
+@app.route("/dialog/clinic/validate/patient", methods=['POST'])
+def validate_patient():
+
+    
+    user_time=datetime.now()
+
+    #print (f'=============RECEVIED \n {rcvd_data}')
+
+    json_data = request.get_json()
+    #print (f'=============json data \n {json_data}')
+
+    short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
+    # Check if the required field exists in the JSON data
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'patient_dob' in json_data['sessionInfo']['parameters']:
+        # Extract the "Policynumber" field
+        patient_dob = json_data['sessionInfo']['parameters']['patient_dob']
+        print (f'patient_dob received====> {patient_dob}')
+        patient_last_name=json_data['sessionInfo']['parameters']['patient_last_name']
+        print (f'patient_last_name received====> {patient_dob}')
+
+      
+        #policynumber= app_helper.remove_non_numeric(str(policynumber_temp))
+      
+        #print (f'Policy Number with only numeric characters====> {policynumber}')
+
+        #Remove dtmfdigits coming from phone
+        #policynumber=policynumber_temp.replace("dtmf_digits_", "")
+       
+        #print (f'policynumber ====> {policynumber}')
+        #print ( f"Y: {int(dob['year'])} M: {int(dob['month'])} D: {int(dob['day'])}" )
+
+        #orig_account = json_data['sessionInfo']['parameters']['account_number']
+         # Extract the "account" field
+        #orig_account_wo_Z = json_data['sessionInfo']['parameters']['account_number']
+
+        #Add Z only for validation
+        #orig_account = "Z"+orig_account_wo_Z
+       
+
+        validation_text="Please enter your date of borth."
+        #write chat_log 0
+        #app_helper.write_chat_log(orig_account, short_session,user_time, "S", validation_text)
+
+        #user_time=datetime.now()
+        #write chat_log 1
+        #app_helper.write_chat_log(orig_account, short_session,user_time, "U", policynumber)
+
+        #validate account
+        valid_patient=app_helper.checkPatientDetails(patient_last_name,patient_dob)
+         # Create the WebhookResponse
+        if (valid_patient):
+            resp_text="Your record has been found"
+            resp_dob=patient_dob
+            resp_patient_last_name=patient_last_name
+        else:
+            resp_text="Unable to find your details"
+            resp_dob=None
+            resp_patient_last_name=None
+            
+        #write chat_log 2
+        #sys_time=datetime.now()
+        #app_helper.write_chat_log(orig_account,short_session ,sys_time, "S", resp_text)   
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [f"{resp_text}"]
+                        }
+                    }
+                ]
+            },
+            "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "patient_dob": resp_dob,
+                        "patient_last_name":resp_patient_last_name
+                    }         
+
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "Patient record not found"}), 400
 
 if __name__ == "__main__":
     app.run(debug=True)
