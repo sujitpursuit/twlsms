@@ -581,7 +581,7 @@ def validate_doctor():
         doctor_name = json_data['sessionInfo']['parameters']['doctor_name']
         print (f'doctor_name received====> {doctor_name}')
         
-
+        global doctor_id
         doctor_id=app_helper.checkDoctor(doctor_name)
          # Create the WebhookResponse
         if (doctor_id != None):
@@ -620,6 +620,49 @@ def validate_doctor():
         return jsonify({"error": "Patient record not found"}), 400
 
 
+
+@app.route("/dialog/clinic/llm/slots", methods=['POST'])
+def call_clinic_llm_slots():
+  
+  
+
+    json_data = request.get_json()
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'slot_query' in json_data['sessionInfo']['parameters']:
+        # Extract the "llm" field
+        slot_query = json_data['sessionInfo']['parameters']['slot_query']
+        print (f'calling LLM for doctor_id {doctor_id} with prompt {slot_query}')
+        
+        llm_response=app_helper.get_doctor_slots( doctor_id,slot_query)
+        #Strip new lines
+        resp_text=llm_response.replace('\n', ' ')
+        print(f"=========> resp_text = {resp_text}")
+       
+         # Create the WebhookResponse
+     
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [resp_text]
+                        }
+                    }
+                ]
+            },
+                     "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "prompt_to_llm": None
+                    }         
+
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "prompt_llm not found"}), 400  
 
 
 if __name__ == "__main__":

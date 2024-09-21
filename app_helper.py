@@ -119,6 +119,31 @@ def checkDoctor(doctor_name):
 
     return doctorID
 
+def get_doctor_slots( doctor_id,slot_prompt):
+
+    url=f"https://app-doctorsappointment-api-dev.azurewebsites.net/clinicapt/api/llm/doctor/{doctor_id}"
+    
+      # Define the data to be sent in the request body
+    payload = {
+        "user_query" : slot_prompt
+    }
+
+    response = requests.post(url,json=payload)
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+        if  'summary' in data:
+            summary=data['summary']
+        else:
+            summary=data['response']
+
+        print(f"\nSummary => {summary}")
+        return_text=summary
+    else:
+        return_text=f"Request failed with status code: {response.status_code}"
+
+    return return_text   
 
 def check_otp(otp,otp_sent):
     if (otp==otp_sent):
