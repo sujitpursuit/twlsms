@@ -647,8 +647,14 @@ def call_clinic_llm_slots():
         
         llm_response=app_helper.get_doctor_slots( doctor_id,slot_query)
         #Strip new lines
-        resp_text=llm_response.replace('\n', ' ')
-        resp_text=llm_response.replace('*', ' ')
+        if llm_response=="NO_SLOT_FOUND":
+            resp_text="No Slots Found for Doctor"
+            slot_query_resp=None
+        else:
+            resp_text=llm_response.replace('\n', ' ')
+            resp_text=llm_response.replace('*', ' ')
+            slot_query_resp=resp_text
+
         global slots_available 
         slots_available=resp_text
 
@@ -671,6 +677,7 @@ def call_clinic_llm_slots():
                 
                     "session": json_data['sessionInfo']['session'],
                     "parameters": {
+                        "slot_query":slot_query_resp,
                         "slot_query_answered": "True"
                     }         
 

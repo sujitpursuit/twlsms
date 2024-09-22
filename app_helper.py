@@ -128,16 +128,24 @@ def get_doctor_slots( doctor_id,slot_prompt):
         "user_query" : slot_prompt
     }
     print(f"prompt payload {payload}")
-
+    summary="NO_SLOT_FOUND"
+    
     response = requests.post(url,json=payload)
     # Check if the request was successful
     if response.status_code == 200:
         # Parse the JSON response
-        data = response.json()
-        if  'summary' in data:
-            summary=data['summary']
+        response_data = response.json()
+        if 'sql_result' in response_data and 'data' in response_data['sql_result']:
+            if not response_data['sql_result']['data']:
+                print("The 'data' array is empty.")
+                summary="NO_SLOT_FOUND"
+            else:
+                print("The 'data' array is not empty.")
+                if  'summary' in response_data:
+                    summary=response_data['summary']
         else:
-            summary=data['response']
+            print("'data' key not found in the JSON.")
+     
 
         print(f"\nSummary => {summary}")
         return_text=summary
