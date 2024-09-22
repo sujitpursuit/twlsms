@@ -505,7 +505,7 @@ def validate_dob():
         return jsonify({"error": "Date of birth field not found"}), 400
     
 
-
+import re
 @app.route("/dialog/clinic/validate/patient", methods=['POST'])
 def validate_patient():
 
@@ -521,8 +521,9 @@ def validate_patient():
         print (f'patient_dob received====> {patient_dob}')
         patient_last_name=json_data['sessionInfo']['parameters']['patient_last_name']
         print (f'patient_last_name received====> {patient_last_name}')
-
-      
+        #remove non alphabets (.)
+        patient_last_name=re.sub(r'[^a-zA-Z]', '', patient_last_name)
+        print (f'patient_last_name after cleaning====> {patient_last_name}')
 
         validation_text="Please enter your date of borth."
       
@@ -580,7 +581,9 @@ def validate_doctor():
         # Extract the  field
         doctor_name = json_data['sessionInfo']['parameters']['doctor_name']
         print (f'doctor_name received====> {doctor_name}')
-        
+          #remove non alphabets (.)
+        doctor_name=re.sub(r'[^a-zA-Z\s]', '', doctor_name)
+        print (f'doctor_name after cleaning====> {doctor_name}')
         global doctor_id
         doctor_id=app_helper.checkDoctor(doctor_name)
          # Create the WebhookResponse
