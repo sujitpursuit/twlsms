@@ -575,7 +575,6 @@ def validate_doctor():
     json_data = request.get_json()
     #print (f'=============json data \n {json_data}')
 
-    short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'doctor_name' in json_data['sessionInfo']['parameters']:
         # Extract the  field
@@ -585,14 +584,22 @@ def validate_doctor():
         doctor_name=re.sub(r'[^a-zA-Z\s]', '', doctor_name)
         print (f'doctor_name after cleaning====> {doctor_name}')
         global doctor_id
-        doctor_id=app_helper.checkDoctor(doctor_name)
-         # Create the WebhookResponse
-        if (doctor_id != None):
-            resp_text=f"Doctor {doctor_name} available for appointments"
-            resp_doctor_name=doctor_name
-        else:
-            resp_text=f"Unable to find Doctor {doctor_name} details"
+        try:
+            doctor_id=app_helper.checkDoctor(doctor_name)
+            # Create the WebhookResponse
+            if (doctor_id != None):
+                resp_text=f"Doctor {doctor_name} available for appointments"
+                resp_doctor_name=doctor_name
+            else:
+                resp_text=f"Unable to find Doctor {doctor_name} details"
+                resp_doctor_name=None
+
+        except:
+            resp_text=f"Error while fetching {doctor_name} details"
             resp_doctor_name=None
+
+    
+       
             
             
   
@@ -638,6 +645,7 @@ def call_clinic_llm_slots():
         llm_response=app_helper.get_doctor_slots( doctor_id,slot_query)
         #Strip new lines
         resp_text=llm_response.replace('\n', ' ')
+        resp_text=llm_response.replace('*', ' ')
         print(f"=========> resp_text = {resp_text}")
        
          # Create the WebhookResponse
@@ -681,6 +689,7 @@ def call_clinic_llm_select_slot():
         
         llm_response=app_helper.get_doctor_slots( doctor_id,selected_slot)
         #Strip new lines
+        resp_text=llm_response.replace('\n', ' ')
         resp_text=llm_response.replace('\n', ' ')
         print(f"=========> resp_text = {resp_text}")
        
