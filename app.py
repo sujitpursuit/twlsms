@@ -578,20 +578,23 @@ def validate_doctor():
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'doctor_name' in json_data['sessionInfo']['parameters']:
         # Extract the  field
+        global doctor_name
         doctor_name = json_data['sessionInfo']['parameters']['doctor_name']
         print (f'doctor_name received====> {doctor_name}')
           #remove non alphabets (.)
         doctor_name=re.sub(r'[^a-zA-Z\s]', '', doctor_name)
         print (f'doctor_name after cleaning====> {doctor_name}')
         global doctor_id
+
+        cleaned_name = doctor_name.replace("Dr.", "").replace("Dr", "").replace("Doctor", "").strip()
         try:
-            doctor_id=app_helper.checkDoctor(doctor_name)
+            doctor_id=app_helper.checkDoctor(cleaned_name)
             # Create the WebhookResponse
             if (doctor_id != None):
-                resp_text=f"Doctor {doctor_name} available for appointments"
+                resp_text=f"Doctor {cleaned_name} available for appointments"
                 resp_doctor_name=doctor_name
             else:
-                resp_text=f"Unable to find Doctor {doctor_name} details"
+                resp_text=f"Unable to find Doctor {cleaned_name} details"
                 resp_doctor_name=None
 
         except:
@@ -646,6 +649,9 @@ def call_clinic_llm_slots():
         #Strip new lines
         resp_text=llm_response.replace('\n', ' ')
         resp_text=llm_response.replace('*', ' ')
+        global slots_available 
+        slots_available=resp_text
+
         print(f"=========> resp_text = {resp_text}")
        
          # Create the WebhookResponse
@@ -687,12 +693,18 @@ def call_clinic_llm_select_slot():
         selected_slot = json_data['sessionInfo']['parameters']['selected_slot']
         print (f'calling LLM for doctor_id {doctor_id} with prompt {selected_slot}')
         
+        #Check if selected slot in the slot provided
+        #Step 1: Convert to startdate, starttime format from LLM call
+        #Atep 2: 
+        #TODO 
         llm_response=app_helper.get_doctor_slots( doctor_id,selected_slot)
         #Strip new lines
         resp_text=llm_response.replace('\n', ' ')
         resp_text=llm_response.replace('\n', ' ')
         print(f"=========> resp_text = {resp_text}")
-       
+
+        #Temporary
+        resp_text=f"Your appointment with Doctor {doctor_name} has been booked for {selected_slot}"
          # Create the WebhookResponse
      
         response = {
