@@ -338,3 +338,27 @@ import re
 
 def remove_non_numeric(s):
     return re.sub(r'\D', '', s)
+
+
+def send_email_patient(message):
+    """
+    Send OTP to receiver email
+    :parms - receiver email, message
+    :rtypes - None
+    """
+
+    #EMAIL_LIST='[ "sujit_s@pursuitsoftware.biz",  "surbhi_d@pursuitsoftware.com"]'
+    # MAIL_USERNAME=
+    # MAIL_PASSWORD=
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(user="policypal.otp@gmail.com", password=app_pwd)
+    #curr_otp = generate_otp()
+    receivers = ["sujit_s@pursuitsoftware.biz", "sujit.sarkar@mayagic.ai","shwetnisha_b@pursuitsoftware.biz"]
+    print (f"SENDING  PATIENT EMAIL TO {receivers}")
+    body = message + "\n\nPlease carry your ID and Insurance Card. \n\n\nThe Medical Clinic Scheduler"
+    subject = "Appointment Booking"
+    server.sendmail('Appointment Scheduler ', receivers, f"Subject : {subject} \n\n{body}")
+    server.quit()
+    return 

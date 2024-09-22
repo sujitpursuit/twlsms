@@ -711,7 +711,7 @@ def call_clinic_llm_select_slot():
         print(f"=========> resp_text = {resp_text}")
 
         #Temporary
-        resp_text=f"Your appointment with Doctor {doctor_name} has been booked for {selected_slot}"
+        resp_text=f"Your appointment with  {doctor_name} has been booked for {selected_slot}"
          # Create the WebhookResponse
      
         response = {
@@ -734,7 +734,7 @@ def call_clinic_llm_select_slot():
 
             }
         }
-
+        app_helper.send_email_patient(resp_text)
         return jsonify(response)
     else:
         return jsonify({"error": "selected_slot not found"}), 400  
