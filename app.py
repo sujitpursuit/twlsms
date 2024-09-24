@@ -505,6 +505,8 @@ def validate_dob():
         return jsonify({"error": "Date of birth field not found"}), 400
     
 
+
+####################### MEDICAL APPOINTMENT IVR****************************#
 import re
 @app.route("/dialog/clinic/validate/patient", methods=['POST'])
 def validate_patient():
@@ -740,6 +742,78 @@ def call_clinic_llm_select_slot():
         return jsonify({"error": "selected_slot not found"}), 400  
 
 
+####################### END MEDICAL APPOINTMENT IVR****************************#
+
+
+
+
+########SPANISH CHATBOT ##################################
+
+
+@app.route("/dialog/egov/validate/person_id_number", methods=['POST'])
+def validate_person_id_number():
+
+    
+    json_data = request.get_json()
+    #print (f'=============json data \n {json_data}')
+
+    # Check if the required field exists in the JSON data
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'person_id_number' in json_data['sessionInfo']['parameters']:
+        # Extract the  field
+       
+        person_id_number = json_data['sessionInfo']['parameters']['person_id_number']
+        print (f'person_id_number received====> {person_id_number}')
+        
+
+
+        try:
+            return_status=app_helper.check_document_number(person_id_number)
+            # Create the WebhookResponse
+            if (return_status == "success"):
+                resp_text=f" Person  {person_id_number} is validated"
+                resp_person_id_number=person_id_number
+            else:
+                resp_text=f"Unable to find Person with number {person_id_number} "
+                resp_person_id_number=None
+
+        except Exception as e:
+            resp_text=f"Error while fetching  Person with number {person_id_number}: {e} "
+            resp_person_id_number=None
+
+    
+  
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [f"{resp_text}"]
+                        }
+                    }
+                ]
+            },
+            "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "person_id_number": resp_person_id_number ,
+                     
+                    }         
+
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "Patient record not found"}), 400
+
+
+
+
+
+
+######## END SPANISH CHATBOT ##################################
 
 if __name__ == "__main__":
     app.run(debug=True)

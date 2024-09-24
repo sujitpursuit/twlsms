@@ -95,6 +95,9 @@ def checkPatientDetails(patient_last_name,patient_dob):
         valid_patient=False
    
     return valid_patient
+
+
+
 def checkDoctor(doctor_name):
 
     first_name, last_name = doctor_name.split(" ")
@@ -153,6 +156,7 @@ def get_doctor_slots( doctor_id,slot_prompt):
         return_text=f"Request failed with status code: {response.status_code}"
 
     return return_text   
+
 
 def check_otp(otp,otp_sent):
     if (otp==otp_sent):
@@ -362,3 +366,32 @@ def send_email_patient(message):
     server.sendmail('Appointment Scheduler ', receivers, f"Subject : {subject} \n\n{body}")
     server.quit()
     return 
+
+
+##### Spanish Chatbot ######
+
+def check_document_number(person_id_number):
+
+
+    url=f"https://app-spanishchatbot-api-dev.azurewebsites.net/api/v1/validate/person_id_number"
+    payload = {
+        "person_id_number": person_id_number
+    }
+
+    
+    response = requests.post(url,json=payload)
+    return_status=None
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+        #print(f"RESPONSE DATA {data}")
+        if  'status_en' in data:
+            return_status=data['status_en']
+
+        print(f"Person number fetch status => {return_status}")
+  
+
+    return return_status
+
+#### SPanish chatbot ##########
