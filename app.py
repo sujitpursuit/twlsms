@@ -761,9 +761,12 @@ def validate_person_id_number():
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'person_id_number' in json_data['sessionInfo']['parameters']:
         # Extract the  field
        
-        person_id_number = json_data['sessionInfo']['parameters']['person_id_number']
-        print (f'person_id_number received====> {person_id_number}')
-        
+        person_id_number_rcvd = json_data['sessionInfo']['parameters']['person_id_number']
+        print (f'person_id_number received====> {person_id_number_rcvd}')
+
+        person_id_number   = str(int(float(person_id_number_rcvd)))
+        print (f'person_id_number converted====> {person_id_number}')
+
 
 
         try:
