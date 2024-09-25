@@ -764,7 +764,8 @@ def validate_person_id_number():
         person_id_number_rcvd = json_data['sessionInfo']['parameters']['person_id_number']
         print (f'person_id_number received====> {person_id_number_rcvd}')
 
-        person_id_number   = str(int(float(person_id_number_rcvd)))
+        global person_id_number   
+        person_id_number= str(int(float(person_id_number_rcvd)))
         print (f'person_id_number converted====> {person_id_number}')
 
 
@@ -773,14 +774,14 @@ def validate_person_id_number():
             return_status=app_helper.check_document_number(person_id_number)
             # Create the WebhookResponse
             if (return_status == "success"):
-                resp_text=f" Person  {person_id_number} is validated"
+                resp_text=f"La persona {person_id_number} está validada"
                 resp_person_id_number=person_id_number
             else:
-                resp_text=f"Unable to find Person with number {person_id_number} "
+                resp_text=f"No se puede encontrar la persona con el número {person_id_number} "
                 resp_person_id_number=None
 
         except Exception as e:
-            resp_text=f"Error while fetching  Person with number {person_id_number}: {e} "
+            resp_text=f"Error al obtener la persona con número {person_id_number}: {e} "
             resp_person_id_number=None
 
     
@@ -810,6 +811,70 @@ def validate_person_id_number():
         return jsonify(response)
     else:
         return jsonify({"error": "Patient record not found"}), 400
+
+
+
+@app.route("/dialog/egov/validate/login_pin", methods=['POST'])
+def validate_personal_pin():
+
+    
+    json_data = request.get_json()
+    #print (f'=============json data \n {json_data}')
+
+    # Check if the required field exists in the JSON data
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'personal_pin' in json_data['sessionInfo']['parameters']:
+        # Extract the  field
+       
+        personal_pin_rcvd = json_data['sessionInfo']['parameters']['personal_pin']
+        print (f'person_id_number received====> {personal_pin_rcvd}')
+
+        person_pin   = personal_pin_rcvd# str(int(float(person_id_number_rcvd)))
+        #print (f'person_id_number converted====> {person_id_number}')
+
+
+
+        try:
+            return_status=app_helper.check_personal_pin(person_id_number,person_pin)
+            # Create the WebhookResponse
+            if (return_status == "success"):
+                resp_text=f"Login pin vaidated"
+                resp_person_pin=person_pin
+            else:
+                resp_text=f"Invalid Login pin "
+                resp_person_pin=None
+
+        except Exception as e:
+            resp_text=f"Error in validating Login pin: {e} "
+            resp_person_pin=None
+
+    
+  
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [f"{resp_text}"]
+                        }
+                    }
+                ]
+            },
+            "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "person_pin": resp_person_pin ,
+                     
+                    }         
+
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "Patient record not found"}), 400
+
 
 
 
