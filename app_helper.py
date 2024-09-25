@@ -422,4 +422,38 @@ def check_personal_pin(person_id_number, person_pin):
         print(f"Error in calling validate login URL {e}")
 
     return return_status
+
+def get_user_prompt_response(person_id_number, user_prompt):
+
+    url=f"https://app-spanishchatbot-api-dev.azurewebsites.net/api/v1/llm/enhance_results/{person_id_number}"
+    payload = {
+       
+        "user_query": user_prompt
+    }
+  
+
+
+    llm_call_response='Error: Before calling LLM API'
+    try:
+       
+        response = requests.post(url,json=payload)
+      
+        # Check if the request was successful
+        if response.status_code == 200:
+            # Parse the JSON response
+            response_json = response.json()
+         
+            if  'summary_es' in response_json:
+                llm_call_response=response_json['summary_es']
+            else:
+                llm_call_response="Error: Did not find summary_es after LLM API call"
+
+    except Exception as e:
+        
+        llm_call_response= f"Error:  calling LLM API call: {e}"
+    
+    print(llm_call_response)
+
+    return llm_call_response
+
 #### SPanish chatbot ##########

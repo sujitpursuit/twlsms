@@ -873,8 +873,64 @@ def validate_personal_pin():
 
         return jsonify(response)
     else:
-        return jsonify({"error": "Patient record not found"}), 400
+        return jsonify({"error": "PIN  not found in requet"}), 400
 
+
+
+
+@app.route("/dialog/egov/llm/get_llm_response", methods=['POST'])
+def call_spanish_llm():
+  
+  
+    user_prompt_answered=False
+    json_data = request.get_json()
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'user_prompt' in json_data['sessionInfo']['parameters']:
+        # Extract the "llm" field
+        user_prompt = json_data['sessionInfo']['parameters']['user_prompt']
+        print (f'calling LLM for personal ID Number{person_id_number} with prompt {user_prompt}')
+        
+        llm_response=app_helper.get_user_prompt_response( person_id_number,user_prompt)
+        #Strip new lines
+        if "Error" in llm_response:
+            resp_text=llm_response
+            user_prompt_resp=None
+        else:
+            resp_text=llm_response.replace('\n', ' ')
+            resp_text=llm_response.replace('*', ' ')
+            user_prompt_resp=None  # To reprompt
+            user_prompt_answered=True 
+
+       
+
+        print(f"=========> egov llm resp_text = {resp_text}")
+       
+         # Create the WebhookResponse
+     
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [resp_text]
+                        }
+                    }
+                ]
+            },
+                     "sessionInfo":{
+
+                
+                    "session": json_data['sessionInfo']['session'],
+                    "parameters": {
+                        "user_prompt":user_prompt_resp,
+                        "user_prompt_answered": user_prompt_answered
+                    }         
+
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "user_prompt not found in request"}), 400  
 
 
 
