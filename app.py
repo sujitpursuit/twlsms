@@ -1009,7 +1009,7 @@ def transfer_spanish_chat():
                 "messages": [
                     {
                         "text": {
-                            "text": [f"Please check your email to see instructions to transfer your current conversation to Query Pal"]
+                            "text": [f"Por favor revise su correo electrónico para ver las instrucciones para transferir su conversación actual a Query Pal"]
                         }
                     }
                 ]
