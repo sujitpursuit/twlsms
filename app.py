@@ -988,7 +988,7 @@ def transfer_spanish_chat():
         prompt_llm = json_data['sessionInfo']['parameters']['user_prompt']
         print (f'Transfer to chat {prompt_llm}')
 
-        base_url="https://app-spanishchatbot-api-dev.azurewebsites.net/api/v1/loadchat"
+        base_url="https://app-spanishchatbot-ui-dev.azurewebsites.net/loadchat"
       
         short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
 
