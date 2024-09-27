@@ -9,16 +9,16 @@ from flask_mail import Mail, Message
 app = Flask(__name__)
 
 
-# Configure Flask-Mail
-app.config['MAIL_SERVER'] = 'mail.smtp2go.com'
-app.config['MAIL_PORT'] = 2525
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'insurance.chat'
-app.config['MAIL_PASSWORD'] = 'L8138M7kIS56P1ii'
-app.config['MAIL_DEFAULT_SENDER'] = ('Insurance Chatbot', 'sujit_s@pursuitsoftware.biz')
+# """ # Configure Flask-Mail
+# app.config['MAIL_SERVER'] = 'mail.smtp2go.com'
+# app.config['MAIL_PORT'] = 2525
+# app.config['MAIL_USE_TLS'] = True
+# app.config['MAIL_USE_SSL'] = False
+# app.config['MAIL_USERNAME'] = 'insurance.chat'
+# app.config['MAIL_PASSWORD'] = 'L8138M7kIS56P1ii'
+# app.config['MAIL_DEFAULT_SENDER'] = ('Insurance Chatbot', 'sujit_s@pursuitsoftware.biz')
 
-mail = Mail(app)
+# mail = Mail(app) """
 
 
 @app.route("/sms", methods=['GET', 'POST'])
@@ -394,8 +394,8 @@ def transfer_chat():
         url = f"{base_url}/{orig_account}/{short_session}"
         email_body=f"\n\nWelcome from Hastings IVR!\n\n\nPlease click on {url} to go to continue your conversation in the Insurance Chatbot PolicyPal. \n\n"
         print(f"email body => {email_body}")
-
-        app_helper.send_email_transfer(email_body)
+        email_subject="Conversation Transfer from IVR to PolicyPal"
+        app_helper.send_email_transfer(email_body, email_subject)
         #email_id=app_helper.get_email(orig_account)
         #email_id="sujit2050@yahoo.com"
         #print(f"email to => {email_id}")
@@ -753,14 +753,17 @@ def call_clinic_llm_select_slot():
 @app.route("/dialog/egov/validate/person_id_number", methods=['POST'])
 def validate_person_id_number():
 
-    
+    user_time=datetime.now()
     json_data = request.get_json()
     #print (f'=============json data \n {json_data}')
+
 
     # Check if the required field exists in the JSON data
     if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'person_id_number' in json_data['sessionInfo']['parameters']:
         # Extract the  field
        
+
+
         person_id_number_rcvd = json_data['sessionInfo']['parameters']['person_id_number']
         print (f'person_id_number received====> {person_id_number_rcvd}')
 
@@ -768,7 +771,15 @@ def validate_person_id_number():
         person_id_number= str(int(float(person_id_number_rcvd)))
         print (f'person_id_number converted====> {person_id_number}')
 
+        #Write chatlog
+        short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
+        welcome_text="Ingrese el número de identificación de la persona"
+        #write chat_log 1
+        app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "S", welcome_text)
 
+        user_time=datetime.now()
+        #write chat_log 2
+        app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "U", person_id_number)
 
         try:
             return_status=app_helper.check_document_number(person_id_number)
@@ -780,11 +791,16 @@ def validate_person_id_number():
                 resp_text=f"No se puede encontrar la persona con el número {person_id_number} "
                 resp_person_id_number=None
 
+
         except Exception as e:
             resp_text=f"Error al obtener la persona con número {person_id_number}: {e} "
             resp_person_id_number=None
 
-    
+        #Write chatlog
+        user_time=datetime.now()
+        #write chat_log 3
+        app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "U", resp_text)
+
   
         response = {
             "fulfillment_response": {
@@ -810,14 +826,15 @@ def validate_person_id_number():
 
         return jsonify(response)
     else:
-        return jsonify({"error": "Patient record not found"}), 400
+        return jsonify({"error": "Person ID Number not found"}), 400
 
 
 
 @app.route("/dialog/egov/validate/login_pin", methods=['POST'])
 def validate_personal_pin():
 
-    
+    user_time=datetime.now()
+
     json_data = request.get_json()
     #print (f'=============json data \n {json_data}')
 
@@ -831,23 +848,35 @@ def validate_personal_pin():
         person_pin   = personal_pin_rcvd# str(int(float(person_id_number_rcvd)))
         #print (f'person_id_number converted====> {person_id_number}')
 
+         #Write chatlog
+        short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
+        askpin_text="Introduzca su PIN de acceso"
+        #write chat_log 1
+        app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "S", askpin_text)
 
+        user_time=datetime.now()
+        #write chat_log 2
+        app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "U", person_pin)
 
         try:
             return_status=app_helper.check_personal_pin(person_id_number,person_pin)
             # Create the WebhookResponse
             if (return_status == "success"):
-                resp_text=f"Login pin vaidated"
+                resp_text="PIN de inicio de sesión validado"
                 resp_person_pin=person_pin
             else:
-                resp_text=f"Invalid Login pin "
+                resp_text=f"PIN de inicio de sesión no válido"
                 resp_person_pin=None
+
 
         except Exception as e:
             resp_text=f"Error in validating Login pin: {e} "
             resp_person_pin=None
 
-    
+        #Write chatlog
+        user_time=datetime.now()
+        #write chat_log 3
+        app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "S", resp_text)
   
         response = {
             "fulfillment_response": {
@@ -864,7 +893,7 @@ def validate_personal_pin():
                 
                     "session": json_data['sessionInfo']['session'],
                     "parameters": {
-                        "person_pin": resp_person_pin ,
+                        "personal_pin": resp_person_pin ,
                      
                     }         
 
@@ -889,6 +918,13 @@ def call_spanish_llm():
         user_prompt = json_data['sessionInfo']['parameters']['user_prompt']
         print (f'calling LLM for personal ID Number{person_id_number} with prompt {user_prompt}')
         
+
+        short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
+        user_time=datetime.now()
+        #write chat_log 2
+        app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "U", user_prompt)
+
+
         llm_response=app_helper.get_user_prompt_response( person_id_number,user_prompt)
         #Strip new lines
         if "Error" in llm_response:
@@ -901,7 +937,9 @@ def call_spanish_llm():
             user_prompt_answered=True 
 
        
-
+        user_time=datetime.now()
+        #write chat_log 2
+        app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "S", resp_text)
         print(f"=========> egov llm resp_text = {resp_text}")
        
          # Create the WebhookResponse
@@ -935,6 +973,52 @@ def call_spanish_llm():
 
 
 
+@app.route("/dialog/egov/llm/transfer", methods=['POST'])
+def transfer_spanish_chat():
+
+    rcvd_data= request.data
+    #print (f'=============RECEVIED \n {rcvd_data}')
+
+    json_data = request.get_json()
+    print (f'=============json data \n {json_data}')
+    #print(f"========parameters {json_data['sessionInfo']['parameters']}")
+    # Check if the required field exists in the JSON data
+    if 'sessionInfo' in json_data and 'parameters' in json_data['sessionInfo'] and 'user_prompt' in json_data['sessionInfo']['parameters']:
+        # Extract the "llm" field
+        prompt_llm = json_data['sessionInfo']['parameters']['user_prompt']
+        print (f'Transfer to chat {prompt_llm}')
+
+        base_url="https://app-spanishchatbot-api-dev.azurewebsites.net/api/v1/loadchat"
+      
+        short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
+
+        
+        
+        url = f"{base_url}/{person_id_number}/{short_session}"
+        email_body=f"\n\nWelcome from Spanish IVR Chatbot!\n\n\nPlease click on {url} to go to continue your conversation in Query Pal. \n\n"
+        print(f"email body => {email_body}")
+        email_subject="Conversation Transfer from IVR to Query Pal"
+        app_helper.send_email_transfer(email_body, email_subject)
+        
+       
+
+         # Create the WebhookResponse
+     
+        response = {
+            "fulfillment_response": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [f"Please check your email to see instructions to transfer your current conversation to Query Pal"]
+                        }
+                    }
+                ]
+            }
+        }
+
+        return jsonify(response)
+    else:
+        return jsonify({"error": "user_prompt not found"}), 400   
 
 
 ######## END SPANISH CHATBOT ##################################

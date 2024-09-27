@@ -22,6 +22,8 @@ try:
 except:
     print('Error in connection')
 
+
+##Clinic DB
 con_string_clinic = 'DRIVER={ODBC Driver 18 for SQL Server};'+'SERVER='+os.getenv('DB_SERVER_CLINIC') +';'+'Database='+os.getenv('DB_NAME_CLINIC') +';'+'UID='+os.getenv('DB_USERNAME_CLINIC') +';' +'PWD='+os.getenv('DB_PWD_CLINIC') +';'
 
 
@@ -31,6 +33,18 @@ try:
     print('CLINIC DB CONNETION SUCCESS')
 except:
     print('Error in CLINC DB connection')
+
+##Spanish DB
+con_string_spanish = 'DRIVER={ODBC Driver 18 for SQL Server};'+'SERVER='+os.getenv('DB_SERVER_SPANISH') +';'+'Database='+os.getenv('DB_NAME_SPANISH') +';'+'UID='+os.getenv('DB_USERNAME_SPANISH') +';' +'PWD='+os.getenv('DB_PWD_SPANISH') +';'
+
+global conn_spanish
+try:
+    conn_spanish = pyodbc.connect(con_string_spanish)
+    print('SPANISH DB CONNETION SUCCESS')
+except:
+    print('Error in SPANISH DB connection')
+
+
 
 basic_auth_creds=os.getenv('BASIC_AUTH')
  
@@ -316,16 +330,13 @@ def generate_otp():
     """
     return str(random.randint(100000, 999999))
 
-def send_email_transfer(message):
+def send_email_transfer(message, email_subject):
     """
     Send OTP to receiver email
     :parms - receiver email, message
     :rtypes - None
     """
 
-    #EMAIL_LIST='[ "sujit_s@pursuitsoftware.biz",  "surbhi_d@pursuitsoftware.com"]'
-    # MAIL_USERNAME=
-    # MAIL_PASSWORD=
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
@@ -333,7 +344,7 @@ def send_email_transfer(message):
     #curr_otp = generate_otp()
     receivers = [ "sujit_s@pursuitsoftware.biz", "sujit.sarkar@mayagic.ai", "shwetnisha_b@pursuitsoftware.biz","surbhi_d@pursuitsoftware.com"]
     body = message
-    subject = "Conversation Transfer from IVR to PolicyPal"
+    subject = email_subject
     server.sendmail('PolicyPal ', receivers, f"Subject : {subject} \n\n{body}")
     server.quit()
     return 
@@ -456,4 +467,13 @@ def get_user_prompt_response(person_id_number, user_prompt):
 
     return llm_call_response
 
+def write_chat_log_spanish(account_no, session,ctime, su, cmessage):
+    cursor = conn_spanish.cursor()
+    print(f"connection in writechat {conn_spanish}")
+    print(f"account {account_no} session {session} time {ctime}  su {su} message {cmessage}")
+    # Do the insert
+    insert_stmt= """insert into es_chatbot.chat_messages (account_number, session_id,chat_time,system_or_user,chat_message) values (?,?,?,?,?)"""
+   
+    cursor.execute(insert_stmt, account_no, session,ctime, su, cmessage)
+    conn_spanish.commit()
 #### SPanish chatbot ##########
