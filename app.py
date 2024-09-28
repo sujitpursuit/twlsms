@@ -713,7 +713,7 @@ def call_clinic_llm_select_slot():
         print(f"=========> resp_text = {resp_text}")
 
         #Temporary
-        resp_text=f"Your appointment with  {doctor_name} has been booked for {selected_slot}"
+        resp_text=f"Your appointment with  {doctor_name} has been booked for {selected_slot}. Please check your email for confirmation. Thank you for using Clinic Appointment Scheduler"
          # Create the WebhookResponse
      
         response = {
