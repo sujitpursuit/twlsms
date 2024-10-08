@@ -843,7 +843,7 @@ def validate_personal_pin():
         # Extract the  field
        
         personal_pin_rcvd = json_data['sessionInfo']['parameters']['personal_pin']
-        print (f'person_id_number received====> {personal_pin_rcvd}')
+        print (f'PIN received====> {personal_pin_rcvd}')
 
         person_pin   = personal_pin_rcvd# str(int(float(person_id_number_rcvd)))
         #print (f'person_id_number converted====> {person_id_number}')

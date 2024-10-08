@@ -411,7 +411,7 @@ def check_personal_pin(person_id_number, person_pin):
     url=f"https://app-spanishchatbot-api-dev.azurewebsites.net/api/v1/validate/login_pin"
     payload = {
         "person_id_number": person_id_number,
-        "login_PIN":person_pin
+        "login_pin":person_pin
     }
   
 
@@ -420,7 +420,7 @@ def check_personal_pin(person_id_number, person_pin):
     try:
        
         response = requests.post(url,json=payload)
-      
+       # print(f'validate pin response {response}')
         # Check if the request was successful
         if response.status_code == 200:
             # Parse the JSON response
@@ -430,7 +430,7 @@ def check_personal_pin(person_id_number, person_pin):
                 return_status=data['status_en']
 
     except Exception as e:
-        print(f"Error in calling validate login URL {e}")
+        print(f"Error in calling pin URL {e}")
 
     return return_status
 
