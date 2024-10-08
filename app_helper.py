@@ -37,6 +37,7 @@ except:
 ##Spanish DB
 con_string_spanish = 'DRIVER={ODBC Driver 18 for SQL Server};'+'SERVER='+os.getenv('DB_SERVER_SPANISH') +';'+'Database='+os.getenv('DB_NAME_SPANISH') +';'+'UID='+os.getenv('DB_USERNAME_SPANISH') +';' +'PWD='+os.getenv('DB_PWD_SPANISH') +';'
 
+
 global conn_spanish
 try:
     conn_spanish = pyodbc.connect(con_string_spanish)
@@ -472,7 +473,7 @@ def write_chat_log_spanish(account_no, session,ctime, su, cmessage):
     print(f"connection in writechat {conn_spanish}")
     print(f"account {account_no} session {session} time {ctime}  su {su} message {cmessage}")
     # Do the insert
-    insert_stmt= """insert into es_chatbot.chat_messages (account_number, session_id,chat_time,system_or_user,chat_message) values (?,?,?,?,?)"""
+    insert_stmt= """insert into en_es_chatbot.chat_messages (account_number, session_id,chat_time,system_or_user,chat_message) values (?,?,?,?,?)"""
    
     cursor.execute(insert_stmt, account_no, session,ctime, su, cmessage)
     conn_spanish.commit()
