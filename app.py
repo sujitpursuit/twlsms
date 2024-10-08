@@ -918,59 +918,99 @@ def call_spanish_llm():
         user_prompt = json_data['sessionInfo']['parameters']['user_prompt']
         print (f'calling LLM for personal ID Number{person_id_number} with prompt {user_prompt}')
         
+        #####################333 Change for combining transfer and llm##################################
+        transfer_substring='transfer'   # if substring.lower() in string.lower():
+        if transfer_substring.lower() in user_prompt.lower():
+            print(f'===========> TRANSFER CALL DETECTED')
+            transfer_call=True
+        else:
+            print(f'===========> NORMAL LLM -AND NOT TRANSFER- CALL DETECTED')
+            transfer_call=False
+
+        ######################################################################################
+
 
         short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
         user_time=datetime.now()
-        #write chat_log 2
+        #write chat_log  
         app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "U", user_prompt)
 
 
-        llm_response=app_helper.get_user_prompt_response( person_id_number,user_prompt)
-        #Strip new lines
-        if "Error" in llm_response:
-            resp_text=llm_response
-            user_prompt_resp=None
-        else:
-            resp_text=llm_response.replace('\n', ' ')
-            resp_text=llm_response.replace('*', ' ')
-            user_prompt_resp=None  # To reprompt
-            user_prompt_answered=True 
+        if (not transfer_call):  #LLM Call
 
-       
-        user_time=datetime.now()
-        #write chat_log 2
-        app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "S", resp_text)
-        print(f"=========> egov llm resp_text = {resp_text}")
-       
-         # Create the WebhookResponse
-     
-        response = {
-            "fulfillment_response": {
-                "messages": [
-                    {
-                        "text": {
-                            "text": [resp_text]
+            llm_response=app_helper.get_user_prompt_response( person_id_number,user_prompt)
+            #Strip new lines
+            if "Error" in llm_response:
+                resp_text=llm_response
+                user_prompt_resp=None
+            else:
+                resp_text=llm_response.replace('\n', ' ')
+                resp_text=llm_response.replace('*', ' ')
+                user_prompt_resp=None  # To reprompt
+                user_prompt_answered=True 
+
+        
+            user_time=datetime.now()
+            #write chat_log 2
+            app_helper.write_chat_log_spanish(person_id_number, short_session,user_time, "S", resp_text)
+            print(f"=========> egov llm resp_text = {resp_text}")
+        
+            # Create the WebhookResponse
+        
+            response = {
+                "fulfillment_response": {
+                    "messages": [
+                        {
+                            "text": {
+                                "text": [resp_text]
+                            }
                         }
-                    }
-                ]
-            },
-                     "sessionInfo":{
+                    ]
+                },
+                        "sessionInfo":{
 
-                
-                    "session": json_data['sessionInfo']['session'],
-                    "parameters": {
-                        "user_prompt":user_prompt_resp,
-                        "user_prompt_answered": user_prompt_answered
-                    }         
+                    
+                        "session": json_data['sessionInfo']['session'],
+                        "parameters": {
+                            "user_prompt":user_prompt_resp,
+                            "user_prompt_answered": user_prompt_answered
+                        }         
 
+                }
             }
-        }
 
-        return jsonify(response)
+            return jsonify(response)
+           
+
+        else:  ##TRansfer call
+            prompt_llm = json_data['sessionInfo']['parameters']['user_prompt']
+            print (f'Transfer to chat {prompt_llm}')
+
+            base_url="https://app-spanishchatbot-ui-dev.azurewebsites.net/loadchat"
+            short_session=app_helper.get_session_id(json_data['sessionInfo']['session'])
+            url = f"{base_url}/{person_id_number}/{short_session}"
+            email_body=f"\n\nWelcome from Spanish IVR Chatbot!\n\n\nPlease click on {url} to go to continue your conversation in Query Pal. \n\n"
+            print(f"email body => {email_body}")
+            email_subject="Conversation Transfer from IVR to Query Pal"
+            app_helper.send_email_transfer(email_body, email_subject)
+        
+            # Create the WebhookResponse
+        
+            response = {
+                "fulfillment_response": {
+                    "messages": [
+                        {
+                            "text": {
+                                "text": [f"Por favor revise su correo electrónico para ver las instrucciones para transferir su conversación actual a Query Pal"]
+                            }
+                        }
+                    ]
+                }
+            }
+
+            return jsonify(response)
     else:
-        return jsonify({"error": "user_prompt not found in request"}), 400  
-
-
+        return jsonify({"error": "user_prompt not found"}), 400   
 
 
 @app.route("/dialog/egov/llm/transfer", methods=['POST'])
