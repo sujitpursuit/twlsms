@@ -343,7 +343,7 @@ def send_email_transfer(message, email_subject):
     server.starttls()
     server.login(user="policypal.otp@gmail.com", password=app_pwd)
     #curr_otp = generate_otp()
-    receivers = [ "sujit_s@pursuitsoftware.biz", "sujit.sarkar@mayagic.ai", "shwetnisha_b@pursuitsoftware.biz","surbhi_d@pursuitsoftware.com"]
+    receivers = [ "sujit_s@pursuitsoftware.biz", "sujit.sarkar@mayagic.ai", "shwetnisha_b@pursuitsoftware.biz","surbhi_d@pursuitsoftware.com","keneth_a@pursuitsoftware.biz"]
     body = message
     subject = email_subject
     server.sendmail('PolicyPal ', receivers, f"Subject : {subject} \n\n{body}")
