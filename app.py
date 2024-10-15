@@ -862,7 +862,7 @@ def validate_personal_pin():
             return_status=app_helper.check_personal_pin(person_id_number,person_pin)
             # Create the WebhookResponse
             if (return_status == "success"):
-                resp_text="PIN de inicio de sesión validado"
+                resp_text="PIN de inicio de sesión validado. Que informacion desea saber sobre el registro de su empresa?"
                 resp_person_pin=person_pin
             else:
                 resp_text=f"PIN de inicio de sesión no válido"
@@ -941,11 +941,13 @@ def call_spanish_llm():
             llm_response=app_helper.get_user_prompt_response( person_id_number,user_prompt)
             #Strip new lines
             if "Error" in llm_response:
-                resp_text=llm_response
+                resp_text='Error al obtener la respuesta. Por favor vuelva a intentarlo. '
                 user_prompt_resp=None
             else:
                 resp_text=llm_response.replace('\n', ' ')
                 resp_text=llm_response.replace('*', ' ')
+                resp_text=resp_text.rstrip()+ ' Desea saber alguna otra informacion sobre el registro de su empresa?'
+          
                 user_prompt_resp=None  # To reprompt
                 user_prompt_answered=True 
 
