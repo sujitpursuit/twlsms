@@ -321,7 +321,7 @@ load_dotenv(find_dotenv())
 app_pwd = os.getenv('APP_PASSWORD')
 # sender = os.getenv('MAIL_USERNAME')
 # email_list = json.loads(os.environ['EMAIL_LIST'])
-#print(f"sender : {sender}  & pwd : {app_pwd} and email lists : {email_list}")
+
 
 def generate_otp():
     """
@@ -337,11 +337,11 @@ def send_email_transfer(message, email_subject):
     :parms - receiver email, message
     :rtypes - None
     """
-
+    #print(f'EMAIL pwd : {app_pwd}')
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
-    server.login(user="policypal.otp@gmail.com", password=app_pwd)
+    server.login(user="querypal.chat@gmail.com", password=app_pwd)
     #curr_otp = generate_otp()
     receivers = [ "sujit_s@pursuitsoftware.biz", "sujit.sarkar@mayagic.ai", "shwetnisha_b@pursuitsoftware.biz","surbhi_d@pursuitsoftware.com","keneth_a@pursuitsoftware.biz"]
     body = message
