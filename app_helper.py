@@ -337,13 +337,13 @@ def send_email_transfer(message, email_subject):
     :parms - receiver email, message
     :rtypes - None
     """
-    #print(f'EMAIL pwd : {app_pwd}')
+    print(f'EMAIL send : sub: {email_subject } body: {message}')
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     server.login(user="querypal.chat@gmail.com", password=app_pwd)
     #curr_otp = generate_otp()
-    receivers = [ "sujit_s@pursuitsoftware.biz", "sujit.sarkar@mayagic.ai", "shwetnisha_b@pursuitsoftware.biz","surbhi_d@pursuitsoftware.com","keneth_a@pursuitsoftware.biz"]
+    receivers = [ "sujit_s@pursuitsoftware.biz"]
     body = message
     subject = email_subject
     server.sendmail('PolicyPal ', receivers, f"Subject : {subject} \n\n{body}")
