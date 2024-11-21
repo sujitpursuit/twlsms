@@ -711,7 +711,7 @@ def call_clinic_llm_select_slot():
         #Strip new lines
         #resp_text=llm_response.replace('\n', ' ')
         #resp_text=llm_response.replace('\n', ' ')
-        print(f"=========> resp_text = {resp_text}")
+        #print(f"=========> resp_text = {resp_text}")
 
         #Temporary
         resp_text=f"Your appointment with  {doctor_name} has been booked for {selected_slot}. Please check your email for confirmation. Thank you for using Clinic Appointment Scheduler"
