@@ -706,10 +706,11 @@ def call_clinic_llm_select_slot():
         #Step 1: Convert to startdate, starttime format from LLM call
         #Atep 2: 
         #TODO 
-        llm_response=app_helper.get_doctor_slots( doctor_id,selected_slot)
+        llm_response='to do booking api'
+        ##TO DOapp_helper.get_doctor_slots( doctor_id,selected_slot)
         #Strip new lines
-        resp_text=llm_response.replace('\n', ' ')
-        resp_text=llm_response.replace('\n', ' ')
+        #resp_text=llm_response.replace('\n', ' ')
+        #resp_text=llm_response.replace('\n', ' ')
         print(f"=========> resp_text = {resp_text}")
 
         #Temporary
