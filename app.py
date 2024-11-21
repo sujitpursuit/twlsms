@@ -737,7 +737,7 @@ def call_clinic_llm_select_slot():
 
             }
         }
-        app_helper.send_email_patient(resp_text)
+        #EMAiL PWD ERROR 21-11-24 app_helper.send_email_patient(resp_text)
         return jsonify(response)
     else:
         return jsonify({"error": "selected_slot not found"}), 400  
